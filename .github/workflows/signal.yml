@@ -1,0 +1,34 @@
+name: Weekly Signal Generator
+
+on:
+  schedule:
+    - cron: '0 11 * * 1'  # Every Monday 4:30pm IST (11:00 UTC)
+  workflow_dispatch:        # Allows manual trigger anytime from GitHub
+
+jobs:
+  generate-signal:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy
+
+      - name: Generate signal
+        run: python scripts/generate_signal.py
+
+      - name: Commit signal
+        run: |
+          git config user.name "Freedom2040 Bot"
+          git config user.email "bot@freedom2040"
+          git add docs/signal.json
+          git diff --staged --quiet || git commit -m "Signal update $(date '+%Y-%m-%d')"
+          git push
