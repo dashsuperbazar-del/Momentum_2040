@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freedom 2040</title>
+<style>
+  :root {
+    --bg: #f5f5f0;
+    --surface: #ffffff;
+    --surface2: #f9f9f7;
+    --border: #e5e5e0;
+    --text: #1a1a18;
+    --muted: #6b6b65;
+    --accent: #2563eb;
+    --accent-bg: #eff6ff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --radius: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141412;
+      --surface: #1e1e1c;
+      --surface2: #252523;
+      --border: #2e2e2c;
+      --text: #f0f0ec;
+      --muted: #8a8a84;
+      --accent-bg: #1e3a5f;
+      --success-bg: #14290d;
+      --danger-bg: #2d0a0a;
+      --warning-bg: #2d1a00;
+      --purple-bg: #1e1040;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+  .app { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .logo { font-size: 20px; font-weight: 600; }
+  .logo span { color: var(--accent); }
+  .updated { font-size: 12px; color: var(--muted); }
+  nav { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; }
+  .nav-btn { padding: 9px 16px; border: none; background: none; cursor: pointer; color: var(--muted);
+             font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+  .metric-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .metric-value { font-size: 22px; font-weight: 600; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+          padding: 1.25rem; margin-bottom: 1rem; }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 1rem; color: var(--muted);
+                text-transform: uppercase; letter-spacing: 0.05em; }
+  .btn { padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+         background: var(--surface); color: var(--text); cursor: pointer; font-size: 14px; }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-danger { color: var(--danger); border-color: var(--danger); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-buy { background: var(--success-bg); color: var(--success); }
+  .badge-sell,.badge-exit { background: var(--danger-bg); color: var(--danger); }
+  .badge-hold { background: var(--accent-bg); color: var(--accent); }
+  .badge-skim { background: var(--purple-bg); color: var(--purple); }
+  .badge-liquid,.badge-liquidbees { background: var(--warning-bg); color: var(--warning); }
+  .alert { padding: 12px 16px; border-radius: var(--radius); font-size: 13px; margin-bottom: 1rem; border-left: 3px solid; }
+  .alert-warn { background: var(--warning-bg); border-color: var(--warning); color: var(--warning); }
+  .alert-info { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+  .alert-success { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+  .signal-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .signal-row:last-child { border-bottom: none; }
+  .signal-rank { font-size: 28px; font-weight: 700; color: var(--border); min-width: 36px; }
+  .rank-1 { color: #f59e0b; }
+  .rank-2 { color: #9ca3af; }
+  .rank-3 { color: #b45309; }
+  .signal-body { flex: 1; }
+  .signal-etf { font-size: 18px; font-weight: 600; }
+  .signal-meta { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .signal-vel { font-size: 15px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: var(--muted); font-weight: 500;
+       border-bottom: 1px solid var(--border); font-size: 12px; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .green { color: var(--success); }
+  .red { color: var(--danger); }
+  .amber { color: var(--warning); }
+  input, select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+                  background: var(--surface); color: var(--text); font-size: 14px; }
+  input:focus, select:focus { outline: none; border-color: var(--accent); }
+  label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .progress-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 5px; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+  .progress-fill.warn { background: var(--warning); }
+  .progress-fill.good { background: var(--success); }
+  .fy-row { display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .fy-row:last-child { border-bottom: none; }
+  .confirm-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .confirm-item:last-child { border-bottom: none; }
+  .confirm-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .confirm-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding-left: 28px; }
+  .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+                padding: 2rem; max-width: 520px; margin: 2rem auto; }
+  .setup-step { margin-bottom: 1.5rem; }
+  .setup-step h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .full-ranking { max-height: 400px; overflow-y: auto; }
+  @media (max-width: 600px) {
+    .metric-value { font-size: 18px; }
+    .signal-etf { font-size: 16px; }
+    .confirm-inputs { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <div class="logo">Freedom <span>2040</span></div>
+      <div class="updated" id="last-updated">Loading signal...</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-sm" onclick="location.reload()">↻ Refresh</button>
+      <button class="btn btn-sm btn-primary" onclick="showPage('signal')">Signal</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="showPage('signal')">📡 Signal</button>
+    <button class="nav-btn" onclick="showPage('portfolio')">💼 Portfolio</button>
+    <button class="nav-btn" onclick="showPage('trades')">📋 Trade log</button>
+    <button class="nav-btn" onclick="showPage('tax')">🧾 Tax ledger</button>
+    <button class="nav-btn" onclick="showPage('settings')">⚙️ Settings</button>
+  </nav>
+
+  <!-- SIGNAL PAGE -->
+  <div id="page-signal" class="page active">
+    <div id="signal-loading" class="alert alert-info">Loading this week's signal...</div>
+    <div id="signal-body" style="display:none">
+      <div class="metric-grid" id="sig-metrics"></div>
+      <div id="action-alerts"></div>
+      <div class="card">
+        <div class="card-title">This week's signal</div>
+        <div id="top3-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Confirm your trades</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Review signal vs what you actually did. Enter units and your actual execution price, then save.</p>
+        <div id="confirm-list"></div>
+        <div style="margin-top:1rem;display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveConfirmed()">Save confirmed trades</button>
+          <button class="btn" onclick="toggleFullRanking()">View full ranking</button>
+        </div>
+      </div>
+      <div class="card" id="full-ranking-card" style="display:none">
+        <div class="card-title">Full ranking (all ETFs)</div>
+        <div class="full-ranking" id="full-ranking-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO PAGE -->
+  <div id="page-portfolio" class="page">
+    <div class="metric-grid" id="port-metrics"></div>
+    <div class="card">
+      <div class="card-title">Open positions</div>
+      <div id="positions-body"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Add manual trade</div>
+      <div class="form-row">
+        <div><label>ETF</label><input id="m-etf" placeholder="e.g. GOLDBEES"></div>
+        <div><label>Type</label>
+          <select id="m-type">
+            <option>BUY</option><option>SELL</option><option>SKIM</option>
+          </select>
+        </div>
+        <div><label>Date</label><input id="m-date" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Units</label><input id="m-units" type="number" step="0.001" placeholder="0"></div>
+        <div><label>Price (Rs)</label><input id="m-price" type="number" step="0.01" placeholder="0.00"></div>
+        <div><label>Extra charges (Rs)</label><input id="m-charges" type="number" value="0"></div>
+      </div>
+      <button class="btn btn-primary" onclick="addManualTrade()">Add trade</button>
+    </div>
+  </div>
+
+  <!-- TRADE LOG PAGE -->
+  <div id="page-trades" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-size:14px;color:var(--muted)" id="trade-count"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" onclick="exportCSV()">⬇ CSV</button>
+        <button class="btn btn-sm" onclick="exportJSON()">⬇ Backup</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>ETF</th><th>Type</th><th>Units</th>
+          <th>Price</th><th>Value</th><th>P&L</th><th>Friction</th><th></th>
+        </tr></thead>
+        <tbody id="trade-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAX PAGE -->
+  <div id="page-tax" class="page">
+    <div class="metric-grid" id="tax-metrics"></div>
+    <div class="card">
+      <div class="card-title">FY-wise tax breakdown (Apr–Mar)</div>
+      <div id="fy-rows"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tax rules</div>
+      <div style="font-size:13px;color:var(--muted);line-height:2">
+        <div>• STCG 20% on equity ETF gains held ≤ 365 days</div>
+        <div>• LTCG 12.5% on gains held > 365 days (above Rs1L exemption per year)</div>
+        <div>• Losses in a FY offset gains before tax is applied</div>
+        <div>• Net loss years carry forward to offset next FY gains</div>
+        <div>• Tax settled as lump sum at start of April each year</div>
+        <div>• Skim profits: only realised gain taxed (cost basis returned to position)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div id="page-settings" class="page">
+    <div class="card">
+      <div class="card-title">Strategy parameters</div>
+      <div class="form-row">
+        <div><label>Initial capital (Rs)</label><input id="s-capital" type="number" value="300000"></div>
+        <div><label>Slots</label><input id="s-slots" type="number" value="3" min="1" max="5"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Skim threshold (%)</label><input id="s-skim" type="number" value="25"></div>
+        <div><label>LIQUIDBEES rate (% pa)</label><input id="s-liquid" type="number" value="6"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Friction (% of trade value)</label><input id="s-friction" type="number" value="0.12" step="0.01"></div>
+        <div><label>Lookback weeks</label><input id="s-lookback" type="number" value="13"></div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Save settings</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Supabase sync (cross-device)</div>
+      <div class="form-row">
+        <div><label>Supabase URL</label><input id="s-url" placeholder="https://xxx.supabase.co"></div>
+        <div><label>Anon key</label><input id="s-key" placeholder="eyJ..."></div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSupabase()">Save and test connection</button>
+      <div id="supabase-status" style="margin-top:8px;font-size:13px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Data</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="exportJSON()">⬇ Export backup</button>
+        <button class="btn" onclick="document.getElementById('import-file').click()">⬆ Import backup</button>
+        <button class="btn btn-danger" onclick="clearAll()">🗑 Clear all data</button>
+      </div>
+      <input type="file" id="import-file" style="display:none" accept=".json" onchange="importJSON(event)">
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── State ──────────────────────────────────────────────────────────────────
+let S = {
+  trades    : [],
+  positions : {},
+  fyData    : {},
+  fyLossCf  : 0,
+  settings  : { capital:300000, slots:3, skim:0.25, liquid:0.06, friction:0.0012, lookback:13 },
+  supabase  : { url:'', key:'' },
+  signal    : null,
+  prices    : {},
+};
+
+let pendingConfirms = [];
+
+// ── Persistence ────────────────────────────────────────────────────────────
+const LS_KEY = 'freedom2040_v1';
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) Object.assign(S, JSON.parse(raw));
+  } catch(e) {}
+}
+
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch(e) {}
+}
+
+// ── Supabase sync ──────────────────────────────────────────────────────────
+async function supabaseFetch(path, opts={}) {
+  if (!S.supabase.url || !S.supabase.key) return null;
+  const base = S.supabase.url.replace(/\/$/, '');
+  const res = await fetch(`${base}/rest/v1/${path}`, {
+    headers: {
+      'apikey'       : S.supabase.key,
+      'Authorization': `Bearer ${S.supabase.key}`,
+      'Content-Type' : 'application/json',
+      'Prefer'       : 'return=representation',
+    },
+    ...opts
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+async function syncToSupabase() {
+  if (!S.supabase.url) return;
+  await supabaseFetch('portfolio?user_id=eq.default', {
+    method : 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates,return=representation',
+               'apikey': S.supabase.key, 'Authorization': `Bearer ${S.supabase.key}`,
+               'Content-Type': 'application/json' },
+    body   : JSON.stringify({ user_id:'default', data: JSON.stringify(S) })
+  });
+}
+
+async function syncFromSupabase() {
+  if (!S.supabase.url) return false;
+  const rows = await supabaseFetch('portfolio?user_id=eq.default&select=data');
+  if (rows && rows.length > 0) {
+    Object.assign(S, JSON.parse(rows[0].data));
+    saveLocal();
+    return true;
+  }
+  return false;
+}
+
+async function saveSettings() {
+  S.settings = {
+    capital  : parseFloat(document.getElementById('s-capital').value),
+    slots    : parseInt(document.getElementById('s-slots').value),
+    skim     : parseFloat(document.getElementById('s-skim').value) / 100,
+    liquid   : parseFloat(document.getElementById('s-liquid').value) / 100,
+    friction : parseFloat(document.getElementById('s-friction').value) / 100,
+    lookback : parseInt(document.getElementById('s-lookback').value),
+  };
+  saveLocal();
+  await syncToSupabase();
+  alert('Settings saved.');
+}
+
+async function saveSupabase() {
+  S.supabase = {
+    url : document.getElementById('s-url').value.trim(),
+    key : document.getElementById('s-key').value.trim(),
+  };
+  saveLocal();
+  const el = document.getElementById('supabase-status');
+  el.textContent = 'Testing...';
+  const ok = await syncFromSupabase();
+  el.textContent = ok ? '✅ Connected and synced.' : '⚠️ Connected but no data yet — will sync on next save.';
+  await syncToSupabase();
+}
+
+// ── Signal loading ─────────────────────────────────────────────────────────
+async function loadSignal() {
+  try {
+    const res  = await fetch('signal.json?t=' + Date.now());
+    const data = await res.json();
+    S.signal = data;
+    data.full_ranking.forEach(r => {
+      S.prices[r.etf] = { current: r.current_px, exec: r.exec_price };
+    });
+    document.getElementById('last-updated').textContent =
+      'Signal: ' + data.signal_date + ' | Exec: ' + data.exec_date;
+    return data;
+  } catch(e) {
+    document.getElementById('signal-loading').textContent =
+      '⚠️ Could not load signal.json — run GitHub Actions workflow first.';
+    document.getElementById('signal-loading').className = 'alert alert-warn';
+    return null;
+  }
+}
+
+// ── Rendering ──────────────────────────────────────────────────────────────
+function fmt(n, decimals=0) {
+  if (isNaN(n)) return '—';
+  return Math.abs(n) >= 1000
+    ? n.toLocaleString('en-IN', { maximumFractionDigits: decimals })
+    : n.toFixed(decimals);
+}
+function fmtRs(n) { return '₹' + fmt(n); }
+function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+function colorClass(n) { return n >= 0 ? 'green' : 'red'; }
+
+function renderSignal(data) {
+  const held  = Object.keys(S.positions);
+  const top   = data.top3;
+  const slots = S.settings.slots;
+
+  document.getElementById('sig-metrics').innerHTML = `
+    <div class="metric">
+      <div class="metric-label">Signal date</div>
+      <div class="metric-value" style="font-size:16px">${data.signal_date}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Execute on</div>
+      <div class="metric-value" style="font-size:16px">${data.exec_date}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Positive momentum</div>
+      <div class="metric-value">${data.n_positive} / ${data.n_total}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Market mood</div>
+      <div class="metric-value ${data.n_positive > data.n_total/2 ? 'green' : 'red'}" style="font-size:14px">
+        ${data.n_positive > data.n_total * 0.7 ? 'Bull' : data.n_positive > data.n_total * 0.4 ? 'Mixed' : 'Bear'}
+      </div>
+    </div>
+  `;
+
+  // Alerts
+  const alerts = [];
+  held.forEach(etf => {
+    const inTop = top.find(t => t.etf === etf);
+    if (!inTop) alerts.push(`<div class="alert alert-warn">Exit signal: <strong>${etf}</strong> dropped out of top ${slots} — sell at next trading day close</div>`);
+    else {
+      const pos = S.positions[etf];
+      const cur = S.prices[etf]?.current || pos.avgPrice;
+      const gain = (cur - pos.avgPrice) / pos.avgPrice * 100;
+      if (gain >= S.settings.skim * 100) {
+        alerts.push(`<div class="alert alert-warn">Skim alert: <strong>${etf}</strong> is up ${gain.toFixed(1)}% — sell surplus above cost basis at execution price</div>`);
+      }
+    }
+  });
+  document.getElementById('action-alerts').innerHTML = alerts.join('');
+
+  // Top 3 list
+  const rankColors = ['rank-1','rank-2','rank-3'];
+  document.getElementById('top3-list').innerHTML = top.map((t, i) => {
+    const isHeld  = held.includes(t.etf);
+    const vel     = t.vel3m;
+    const isLiq   = vel < 0;
+    const pos     = S.positions[t.etf];
+    const cur     = S.prices[t.etf]?.current || 0;
+    const gain    = pos ? (cur - pos.avgPrice) / pos.avgPrice * 100 : null;
+    const isSkim  = gain !== null && gain >= S.settings.skim * 100;
+
+    let badge = '';
+    if (isLiq)       badge = '<span class="badge badge-liquid">LIQUIDBEES</span>';
+    else if (isSkim)  badge = '<span class="badge badge-skim">SKIM</span>';
+    else if (isHeld)  badge = '<span class="badge badge-hold">HOLD</span>';
+    else              badge = '<span class="badge badge-buy">BUY</span>';
+
+    return `<div class="signal-row">
+      <div class="signal-rank ${rankColors[i]||''}">#${t.rank}</div>
+      <div class="signal-body">
+        <div class="signal-etf">${t.etf} ${badge}</div>
+        <div class="signal-meta">3M return: <strong class="${colorClass(vel)}">${fmtPct(vel)}</strong>
+          &nbsp;|&nbsp; Monday close: ₹${t.current_px}
+          &nbsp;|&nbsp; Exec price: ₹${t.exec_price}
+          ${pos ? `&nbsp;|&nbsp; Your entry: ₹${pos.avgPrice.toFixed(2)} (${gain >= 0 ? '+' : ''}${gain?.toFixed(1)}%)` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Build confirm list
+  const confirms = [];
+  top.forEach(t => {
+    const isHeld = held.includes(t.etf);
+    const vel    = t.vel3m;
+    const pos    = S.positions[t.etf];
+    const cur    = S.prices[t.etf]?.current || t.exec_price;
+    const gain   = pos ? (cur - pos.avgPrice) / pos.avgPrice * 100 : null;
+
+    if (vel < 0 && !isHeld) return; // park in LIQUIDBEES, no trade needed
+    if (!isHeld && vel >= 0) confirms.push({ etf: t.etf, action: 'BUY', execPrice: t.exec_price });
+    if (isHeld && gain !== null && gain >= S.settings.skim * 100) {
+      confirms.push({ etf: t.etf, action: 'SKIM', execPrice: t.exec_price });
+    }
+  });
+  held.forEach(etf => {
+    if (!top.find(t => t.etf === etf)) {
+      const exec = S.prices[etf]?.exec || S.prices[etf]?.current || 0;
+      confirms.push({ etf, action: 'EXIT', execPrice: exec });
+    }
+  });
+
+  pendingConfirms = confirms;
+
+  if (!confirms.length) {
+    document.getElementById('confirm-list').innerHTML =
+      '<p style="color:var(--muted);font-size:13px">No action needed — all positions match the signal.</p>';
+  } else {
+    document.getElementById('confirm-list').innerHTML = confirms.map((c, i) => `
+      <div class="confirm-item">
+        <div class="confirm-top">
+          <input type="checkbox" id="chk${i}" checked style="width:auto;margin-top:2px">
+          <label for="chk${i}" style="font-size:15px;font-weight:600;cursor:pointer">
+            <span class="badge badge-${c.action.toLowerCase()}">${c.action}</span>
+            &nbsp; ${c.etf}
+          </label>
+        </div>
+        <div class="confirm-inputs">
+          <div><label>Units</label><input type="number" id="cu${i}" step="0.001" placeholder="0"></div>
+          <div><label>Actual price (Rs)</label><input type="number" id="cp${i}" value="${c.execPrice}" step="0.01"></div>
+          <div><label>Extra charges (Rs)</label><input type="number" id="cc${i}" value="0" step="0.01"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Full ranking table
+  document.getElementById('full-ranking-list').innerHTML = `
+    <table>
+      <thead><tr><th>#</th><th>ETF</th><th>3M return</th><th>Price</th><th>Exec price</th></tr></thead>
+      <tbody>${data.full_ranking.map(r => `<tr>
+        <td style="color:var(--muted)">${r.rank}</td>
+        <td><strong>${r.etf}</strong></td>
+        <td class="${colorClass(r.vel3m)}">${fmtPct(r.vel3m)}</td>
+        <td>₹${r.current_px}</td>
+        <td>₹${r.exec_price}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+
+  document.getElementById('signal-loading').style.display = 'none';
+  document.getElementById('signal-body').style.display    = 'block';
+}
+
+function toggleFullRanking() {
+  const el = document.getElementById('full-ranking-card');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ── Trade execution ────────────────────────────────────────────────────────
+function getfy(dateStr) {
+  const d = new Date(dateStr); const m = d.getMonth() + 1;
+  return m >= 4 ? d.getFullYear() : d.getFullYear() - 1;
+}
+
+function recordFyPnl(date, pnl) {
+  const fy = getfy(date);
+  if (!S.fyData[fy]) S.fyData[fy] = { net: 0, tax: 0 };
+  S.fyData[fy].net += pnl;
+}
+
+function executeTrade(etf, action, units, price, charges, date) {
+  const value    = units * price;
+  const friction = value * S.settings.friction + (charges || 0);
+  let pnl = 0;
+
+  if (action === 'BUY') {
+    if (!S.positions[etf]) S.positions[etf] = { units:0, avgPrice:0, costBasis:0, entryDate:date };
+    const pos     = S.positions[etf];
+    const totCost = pos.units * pos.avgPrice + value;
+    pos.units    += units;
+    pos.avgPrice  = totCost / pos.units;
+    pos.costBasis = totCost;
+  } else if (action === 'EXIT' || action === 'SELL') {
+    const pos = S.positions[etf];
+    if (pos) {
+      pnl = (price - pos.avgPrice) * units - friction;
+      recordFyPnl(date, pnl);
+      if (units >= pos.units * 0.99) delete S.positions[etf];
+      else { pos.units -= units; pos.costBasis = pos.units * pos.avgPrice; }
+    }
+  } else if (action === 'SKIM') {
+    const pos = S.positions[etf];
+    if (pos) {
+      const surplusVal    = (price - pos.avgPrice) * units;
+      pnl                 = surplusVal - friction;
+      const fractionKept  = (pos.units - units) / pos.units;
+      pos.units          -= units;
+      pos.costBasis      *= fractionKept;
+      pos.avgPrice        = pos.costBasis / pos.units;
+      recordFyPnl(date, pnl);
+    }
+  }
+
+  const trade = { id: Date.now() + Math.random(), date, etf, type: action,
+                  units, price, value, friction, pnl };
+  S.trades.unshift(trade);
+  return trade;
+}
+
+async function saveConfirmed() {
+  if (!pendingConfirms.length) return;
+  let count = 0;
+  const today = new Date().toISOString().slice(0, 10);
+  pendingConfirms.forEach((c, i) => {
+    if (!document.getElementById('chk' + i)?.checked) return;
+    const units   = parseFloat(document.getElementById('cu' + i)?.value || 0);
+    const price   = parseFloat(document.getElementById('cp' + i)?.value || c.execPrice);
+    const charges = parseFloat(document.getElementById('cc' + i)?.value || 0);
+    if (!units || !price) return;
+    executeTrade(c.etf, c.action, units, price, charges, today);
+    count++;
+  });
+  if (count > 0) {
+    saveLocal();
+    await syncToSupabase();
+    alert(count + ' trade(s) saved.');
+    renderPortfolio(); renderTradeLog(); renderTax();
+  } else {
+    alert('No trades to save — check units are filled in.');
+  }
+}
+
+async function addManualTrade() {
+  const etf     = document.getElementById('m-etf').value.trim().toUpperCase();
+  const type    = document.getElementById('m-type').value;
+  const date    = document.getElementById('m-date').value || new Date().toISOString().slice(0, 10);
+  const units   = parseFloat(document.getElementById('m-units').value || 0);
+  const price   = parseFloat(document.getElementById('m-price').value || 0);
+  const charges = parseFloat(document.getElementById('m-charges').value || 0);
+  if (!etf || !units || !price) { alert('Fill in ETF, units and price.'); return; }
+  executeTrade(etf, type, units, price, charges, date);
+  saveLocal();
+  await syncToSupabase();
+  renderPortfolio(); renderTradeLog(); renderTax();
+  ['m-etf','m-units','m-price'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-charges').value = '0';
+  alert('Trade added.');
+}
+
+async function deleteTrade(id) {
+  if (!confirm('Delete this trade? This cannot be undone.')) return;
+  S.trades = S.trades.filter(t => t.id !== id);
+  saveLocal();
+  await syncToSupabase();
+  renderTradeLog();
+}
+
+// ── Portfolio render ───────────────────────────────────────────────────────
+function renderPortfolio() {
+  const pos   = Object.entries(S.positions);
+  const cost  = pos.reduce((s, [,p]) => s + p.costBasis, 0);
+  const mktv  = pos.reduce((s, [etf, p]) => {
+    const cur = S.prices[etf]?.current || p.avgPrice;
+    return s + p.units * cur;
+  }, 0);
+  const unPnl = mktv - cost;
+  const ret   = cost > 0 ? unPnl / cost * 100 : 0;
+  const realised = S.trades.filter(t => t.type !== 'BUY').reduce((s, t) => s + (t.pnl || 0), 0);
+
+  document.getElementById('port-metrics').innerHTML = `
+    <div class="metric"><div class="metric-label">Market value</div><div class="metric-value">${fmtRs(mktv)}</div></div>
+    <div class="metric"><div class="metric-label">Invested</div><div class="metric-value">${fmtRs(cost)}</div></div>
+    <div class="metric"><div class="metric-label">Unrealised P&L</div><div class="metric-value ${colorClass(unPnl)}">${fmtRs(unPnl)}</div></div>
+    <div class="metric"><div class="metric-label">Return</div><div class="metric-value ${colorClass(ret)}">${fmtPct(ret)}</div></div>
+    <div class="metric"><div class="metric-label">Realised P&L</div><div class="metric-value ${colorClass(realised)}">${fmtRs(realised)}</div></div>
+  `;
+
+  if (!pos.length) {
+    document.getElementById('positions-body').innerHTML =
+      '<p style="color:var(--muted);font-size:13px;padding:1rem 0">No open positions.</p>';
+    return;
+  }
+
+  document.getElementById('positions-body').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>ETF</th><th>Units</th><th>Avg price</th><th>Cost basis</th>
+        <th>Current</th><th>Mkt value</th><th>P&L</th><th>Return</th><th>Skim</th>
+      </tr></thead>
+      <tbody>${pos.map(([etf, p]) => {
+        const cur  = S.prices[etf]?.current || p.avgPrice;
+        const mv   = p.units * cur;
+        const pnl  = mv - p.costBasis;
+        const ret  = p.costBasis > 0 ? pnl / p.costBasis * 100 : 0;
+        const pct  = Math.min(ret / (S.settings.skim * 100) * 100, 100);
+        const warn = ret >= S.settings.skim * 100;
+        return `<tr>
+          <td><strong>${etf}</strong></td>
+          <td>${p.units.toFixed(3)}</td>
+          <td>₹${p.avgPrice.toFixed(2)}</td>
+          <td>${fmtRs(p.costBasis)}</td>
+          <td>₹${cur.toFixed(2)}</td>
+          <td>${fmtRs(mv)}</td>
+          <td class="${colorClass(pnl)}">${fmtRs(pnl)}</td>
+          <td class="${colorClass(ret)}">${fmtPct(ret)}</td>
+          <td style="min-width:90px">
+            <div style="font-size:11px;color:${warn?'var(--warning)':'var(--muted)'}">
+              ${warn ? '⚡ SKIM NOW' : ret.toFixed(1)+'% / '+(S.settings.skim*100)+'%'}
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill ${warn?'warn':pct>60?'good':''}" style="width:${pct}%"></div>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+// ── Trade log render ───────────────────────────────────────────────────────
+function renderTradeLog() {
+  const t = S.trades;
+  document.getElementById('trade-count').textContent = t.length + ' trades';
+  const body = document.getElementById('trade-tbody');
+  if (!t.length) {
+    body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem">No trades yet</td></tr>';
+    return;
+  }
+  body.innerHTML = t.map(tr => `<tr>
+    <td style="white-space:nowrap;color:var(--muted)">${tr.date}</td>
+    <td><strong>${tr.etf}</strong></td>
+    <td><span class="badge badge-${tr.type.toLowerCase()}">${tr.type}</span></td>
+    <td>${(tr.units||0).toFixed(3)}</td>
+    <td>₹${(tr.price||0).toFixed(2)}</td>
+    <td>${fmtRs(tr.value||0)}</td>
+    <td class="${colorClass(tr.pnl||0)}">${tr.pnl ? fmtRs(tr.pnl) : '—'}</td>
+    <td style="color:var(--muted)">${fmtRs(tr.friction||0)}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteTrade(${JSON.stringify(tr.id)})">✕</button></td>
+  </tr>`).join('');
+}
+
+// ── Tax render ─────────────────────────────────────────────────────────────
+function renderTax() {
+  const fys     = Object.keys(S.fyData).sort();
+  let cf        = S.fyLossCf || 0;
+  let totalTax  = 0;
+  const rows    = [];
+
+  fys.forEach(fy => {
+    const d       = S.fyData[fy];
+    const taxable = d.net - cf;
+    let tax       = 0;
+    if (taxable > 0) { tax = taxable * 0.20; cf = 0; }
+    else { cf = Math.abs(taxable); }
+    d.tax   = tax;
+    totalTax += tax;
+    const eff = d.net > 0 ? tax / d.net * 100 : 0;
+    rows.push({ fy: `FY${fy}–${parseInt(fy)+1}`, net: d.net, tax, eff, cf });
+  });
+
+  const realised = S.trades.filter(t => t.type !== 'BUY').reduce((s, t) => s + (t.pnl || 0), 0);
+
+  document.getElementById('tax-metrics').innerHTML = `
+    <div class="metric"><div class="metric-label">Total realised P&L</div>
+      <div class="metric-value ${colorClass(realised)}">${fmtRs(realised)}</div></div>
+    <div class="metric"><div class="metric-label">Total tax paid</div>
+      <div class="metric-value amber">${fmtRs(totalTax)}</div></div>
+    <div class="metric"><div class="metric-label">Carry-forward loss</div>
+      <div class="metric-value">${fmtRs(cf)}</div></div>
+    <div class="metric"><div class="metric-label">Effective tax rate</div>
+      <div class="metric-value">${realised > 0 ? (totalTax/realised*100).toFixed(1)+'%' : '—'}</div></div>
+  `;
+
+  const el = document.getElementById('fy-rows');
+  if (!rows.length) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">No closed trades yet.</p>'; return; }
+
+  el.innerHTML = rows.map(r => `
+    <div class="fy-row">
+      <div style="font-weight:600;min-width:120px">${r.fy}</div>
+      <div>Net P&L: <span class="${colorClass(r.net)}">${fmtRs(r.net)}</span></div>
+      <div>Tax: <span class="amber">${fmtRs(r.tax)}</span></div>
+      <div style="color:var(--muted)">${r.eff.toFixed(1)}% rate</div>
+      ${r.cf > 0 ? `<div style="color:var(--muted);font-size:12px">CF: ${fmtRs(r.cf)}</div>` : '<div></div>'}
+    </div>
+  `).join('');
+}
+
+// ── Settings render ────────────────────────────────────────────────────────
+function loadSettingsForm() {
+  const s = S.settings;
+  document.getElementById('s-capital').value  = s.capital;
+  document.getElementById('s-slots').value    = s.slots;
+  document.getElementById('s-skim').value     = s.skim * 100;
+  document.getElementById('s-liquid').value   = s.liquid * 100;
+  document.getElementById('s-friction').value = s.friction * 100;
+  document.getElementById('s-lookback').value = s.lookback;
+  document.getElementById('s-url').value      = S.supabase.url || '';
+  document.getElementById('s-key').value      = S.supabase.key || '';
+}
+
+// ── Export / Import ────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['Date','ETF','Type','Units','Price','Value','P&L','Friction']];
+  S.trades.forEach(t => rows.push([
+    t.date, t.etf, t.type,
+    (t.units||0).toFixed(3), (t.price||0).toFixed(2),
+    (t.value||0).toFixed(2), (t.pnl||0).toFixed(2), (t.friction||0).toFixed(2)
+  ]));
+  const blob = new Blob([rows.map(r => r.join(',')).join('\n')], { type:'text/csv' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'freedom2040_trades.csv' });
+  a.click();
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type:'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'freedom2040_backup.json' });
+  a.click();
+}
+
+function importJSON(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    try {
+      Object.assign(S, JSON.parse(ev.target.result));
+      saveLocal();
+      await syncToSupabase();
+      alert('Data imported successfully.');
+      location.reload();
+    } catch(err) { alert('Invalid backup file.'); }
+  };
+  reader.readAsText(file);
+}
+
+async function clearAll() {
+  if (!confirm('Delete ALL trades, positions and tax data? Cannot be undone.')) return;
+  S.trades = []; S.positions = {}; S.fyData = {}; S.fyLossCf = 0;
+  saveLocal();
+  await syncToSupabase();
+  location.reload();
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if (b.getAttribute('onclick')?.includes(name)) b.classList.add('active'); });
+  if (name === 'portfolio') renderPortfolio();
+  if (name === 'trades')    renderTradeLog();
+  if (name === 'tax')       renderTax();
+  if (name === 'settings')  loadSettingsForm();
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.getElementById('m-date').value = new Date().toISOString().slice(0, 10);
+
+loadLocal();
+renderPortfolio();
+renderTradeLog();
+renderTax();
+loadSignal().then(data => { if (data) renderSignal(data); });
+</script>
+</body>
+  </html>
