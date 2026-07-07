@@ -71,6 +71,33 @@ ETF_UNIVERSE = {
     'UNIONGOLD': 'UNIONGOLD.NS','MOVALUE': 'MOVALUE.NS','TOP100CASE': 'TOP100CASE.NS',
 }
 
+def load_universe_from_supabase():
+    """
+    Load ETF universe from Supabase etf_universe table.
+    Returns dict {symbol: symbol.NS} or falls back to hardcoded ETF_UNIVERSE.
+    """
+    try:
+        url = f"{SB_URL}/rest/v1/etf_universe?user_id=eq.default&select=symbols"
+        r   = requests.get(url, headers={
+            'apikey'       : SB_KEY,
+            'Authorization': f'Bearer {SB_KEY}',
+        })
+        if r.status_code == 200:
+            rows = r.json()
+            if rows and rows[0].get('symbols'):
+                import json as _json
+                syms = _json.loads(rows[0]['symbols'])
+                if isinstance(syms, list) and len(syms) > 0:
+                    universe = {s: f'{s}.NS' for s in syms}
+                    print(f'  Loaded {len(universe)} ETFs from Supabase universe')
+                    return universe
+    except Exception as e:
+        print(f'  Warning: could not load universe from Supabase: {e}')
+
+    print(f'  Falling back to hardcoded universe ({len(ETF_UNIVERSE)} ETFs)')
+    return ETF_UNIVERSE
+
+
 LOOKBACK_WEEKS = 13
 N_SLOTS        = 3
 
@@ -89,11 +116,13 @@ def sb_upsert(table, rows):
     return r
 
 
-def fetch_prices(end_date, lookback_days=120):
+def fetch_prices(end_date, lookback_days=120, universe=None):
+    if universe is None:
+        universe = ETF_UNIVERSE
     start_date = end_date - timedelta(days=lookback_days)
     prices = {}
-    total  = len(ETF_UNIVERSE)
-    for i, (name, ticker) in enumerate(ETF_UNIVERSE.items(), 1):
+    total  = len(universe)
+    for i, (name, ticker) in enumerate(universe.items(), 1):
         try:
             df = yf.download(
                 ticker,
@@ -175,11 +204,14 @@ def backfill(from_date_str):
     print(f'\nBackfilling from {from_date_str} to {today.strftime("%Y-%m-%d")}')
     print('This will take a while — downloading data for each week...\n')
 
+    # Load universe once for the entire backfill
+    universe = load_universe_from_supabase()
+    print(f'  Using {len(universe)} ETFs from universe\n')
     week_num = 0
     while current <= today:
         week_num += 1
         print(f'\n--- Week {week_num}: signal date ~{current.strftime("%Y-%m-%d")} ---')
-        prices = fetch_prices(current, lookback_days=150)
+        prices = fetch_prices(current, lookback_days=150, universe=universe)
         if prices:
             signal, _ = generate_signal(prices)
             if signal:
@@ -196,7 +228,9 @@ def main(run_date=None):
     print(f'Universe : {len(ETF_UNIVERSE)} ETFs (turnover >= 1 Cr)')
     print(f'Run date : {end_date.strftime("%Y-%m-%d %H:%M")}\n')
 
-    prices         = fetch_prices(end_date)
+    # Load ETF universe from Supabase (or fallback to hardcoded)
+    universe       = load_universe_from_supabase()
+    prices         = fetch_prices(end_date, universe=universe)
     signal, ranked = generate_signal(prices)
 
     if signal:
@@ -213,6 +247,33 @@ def main(run_date=None):
             for i, (n, d) in enumerate(ranked)
         ],
         'n_positive'  : sum(1 for _, d in ranked if d['vel3m'] > 0),
+        'n_total'     : len(ranked),
+    }
+
+    os.makedirs('docs', exist_ok=True)
+    with open('docs/signal.json', 'w') as f:
+        json.dump(output, f, indent=2)
+
+    print(f'\nLoaded {len(prices)}/{len(ETF_UNIVERSE)} ETFs\n')
+    print('TOP 3 SIGNAL:')
+    print('-' * 65)
+    for s in signal:
+        print(f"  #{s['rank']}  {s['etf']:<15} {s['vel3m']:+.2f}%  exec ₹{s['exec_price']}")
+    print('-' * 65)
+    print(f"Signal: {output['signal_date']} | Execute: {output['exec_date']}")
+    print(f"Positive momentum: {output['n_positive']}/{output['n_total']}")
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--backfill', metavar='YYYY-MM-DD',
+                        help='Backfill signal history from this date to today')
+    args = parser.parse_args()
+
+    if args.backfill:
+        backfill(args.backfill)
+    else:
+        main()ranked if d['vel3m'] > 0),
         'n_total'     : len(ranked),
     }
 
