@@ -1,10 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import json
-import os
-import requests
-import argparse
+import json, os, requests, argparse
 from datetime import datetime, timedelta
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -12,116 +9,121 @@ from datetime import datetime, timedelta
 # ─────────────────────────────────────────────────────────────────────────────
 SB_URL = 'https://scnvnfrvxwrdwskcktnj.supabase.co'
 SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjbnZuZnJ2eHdyZHdza2NrdG5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MDE1MjYsImV4cCI6MjA5ODk3NzUyNn0.GmJ-C5mZORvPGgdp2JFDlZXamBQRwUOgAZjBmHm69C4'
-SB_HEADERS = {
-    'apikey': SB_KEY,
+SB_HDR = {
+    'apikey'       : SB_KEY,
     'Authorization': f'Bearer {SB_KEY}',
-    'Content-Type': 'application/json',
-    'Prefer': 'resolution=merge-duplicates,return=minimal',
+    'Content-Type' : 'application/json',
+    'Prefer'       : 'resolution=merge-duplicates,return=minimal',
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# ETF UNIVERSE — 135 ETFs with turnover >= 1 Cr
-# Updated: 30 Jun 2026
+# FALLBACK UNIVERSE — used only if Supabase is unreachable
 # ─────────────────────────────────────────────────────────────────────────────
-ETF_UNIVERSE = {
-    'SILVERBEES': 'SILVERBEES.NS','GOLDBEES': 'GOLDBEES.NS','NIFTYBEES': 'NIFTYBEES.NS',
-    'TATSILV': 'TATSILV.NS','HDFCSILVER': 'HDFCSILVER.NS','SILVERIETF': 'SILVERIETF.NS',
-    'TATAGOLD': 'TATAGOLD.NS','GOLDIETF': 'GOLDIETF.NS','ITBEES': 'ITBEES.NS',
-    'SETFGOLD': 'SETFGOLD.NS','BANKBEES': 'BANKBEES.NS','HDFCGOLD': 'HDFCGOLD.NS',
-    'SBISILVER': 'SBISILVER.NS','PVTBANIETF': 'PVTBANIETF.NS','SILVER': 'SILVER.NS',
-    'PSUBNKBEES': 'PSUBNKBEES.NS','JUNIORBEES': 'JUNIORBEES.NS','GOLD1': 'GOLD1.NS',
-    'SILVERCASE': 'SILVERCASE.NS','HDFCSML250': 'HDFCSML250.NS','GOLDCASE': 'GOLDCASE.NS',
-    'SILVERAXIS': 'SILVERAXIS.NS','MON100': 'MON100.NS','GOLDETF': 'GOLDETF.NS',
-    'SILVER1': 'SILVER1.NS','MODEFENCE': 'MODEFENCE.NS','SETFNIF50': 'SETFNIF50.NS',
-    'NIFTYIETF': 'NIFTYIETF.NS','MID150BEES': 'MID150BEES.NS','PHARMABEES': 'PHARMABEES.NS',
-    'SILVERBETA': 'SILVERBETA.NS','SILVERAG': 'SILVERAG.NS','METALIETF': 'METALIETF.NS',
-    'CPSEETF': 'CPSEETF.NS','SILVERADD': 'SILVERADD.NS','MOREALTY': 'MOREALTY.NS',
-    'NEXT50IETF': 'NEXT50IETF.NS','HDFCNEXT50': 'HDFCNEXT50.NS','AUTOBEES': 'AUTOBEES.NS',
-    'SMALLCAP': 'SMALLCAP.NS','HNGSNGBEES': 'HNGSNGBEES.NS','ALPHA': 'ALPHA.NS',
-    'SETFNIFBK': 'SETFNIFBK.NS','PSUBANK': 'PSUBANK.NS','MONIFTY500': 'MONIFTY500.NS',
-    'GOLDBETA': 'GOLDBETA.NS','GROWWSLVR': 'GROWWSLVR.NS','FMCGIETF': 'FMCGIETF.NS',
-    'BANKIETF': 'BANKIETF.NS','BANKNIFTY1': 'BANKNIFTY1.NS','GOLDADD': 'GOLDADD.NS',
-    'BANKBETA': 'BANKBETA.NS','PVTBANKADD': 'PVTBANKADD.NS','FINIETF': 'FINIETF.NS',
-    'BSLGOLDETF': 'BSLGOLDETF.NS','MIDCAPETF': 'MIDCAPETF.NS','BSLNIFTY': 'BSLNIFTY.NS',
-    'ESILVER': 'ESILVER.NS','NIFTYETF': 'NIFTYETF.NS','ICICIB22': 'ICICIB22.NS',
-    'METAL': 'METAL.NS','MOSMALL250': 'MOSMALL250.NS','HDFCNIFBAN': 'HDFCNIFBAN.NS',
-    'MOCAPITAL': 'MOCAPITAL.NS','MOMENTUM50': 'MOMENTUM50.NS','IT': 'IT.NS',
-    'GROWWPOWER': 'GROWWPOWER.NS','MAFANG': 'MAFANG.NS','NIFTY1': 'NIFTY1.NS',
-    'ITIETF': 'ITIETF.NS','GROWWGOLD': 'GROWWGOLD.NS','MOM100': 'MOM100.NS',
-    'MOM30IETF': 'MOM30IETF.NS','NIFTYBETA': 'NIFTYBETA.NS','LOWVOLIETF': 'LOWVOLIETF.NS',
-    'NEXT50BETA': 'NEXT50BETA.NS','MIDCAPIETF': 'MIDCAPIETF.NS','GROWWDEFNC': 'GROWWDEFNC.NS',
-    'NEXT50': 'NEXT50.NS','BFSI': 'BFSI.NS','NIFTYADD': 'NIFTYADD.NS',
-    'ABSLBANETF': 'ABSLBANETF.NS','HDFCNIFTY': 'HDFCNIFTY.NS','SETFNN50': 'SETFNN50.NS',
-    'AUTOIETF': 'AUTOIETF.NS','EGOLD': 'EGOLD.NS','LOWVOL1': 'LOWVOL1.NS',
-    'CHEMICAL': 'CHEMICAL.NS','ENERGY': 'ENERGY.NS','HDFCBSE500': 'HDFCBSE500.NS',
-    'ITETF': 'ITETF.NS','BANKADD': 'BANKADD.NS','MID150CASE': 'MID150CASE.NS',
-    'TOP10ADD': 'TOP10ADD.NS','DEFENCE': 'DEFENCE.NS','HEALTHIETF': 'HEALTHIETF.NS',
-    'PSUBNKIETF': 'PSUBNKIETF.NS','MOM50': 'MOM50.NS','BANKETF': 'BANKETF.NS',
-    'ABSL10BANK': 'ABSL10BANK.NS','OILIETF': 'OILIETF.NS','QGOLDHALF': 'QGOLDHALF.NS',
-    'GROWWHOSPI': 'GROWWHOSPI.NS','GROWWRAIL': 'GROWWRAIL.NS','EQUAL50ADD': 'EQUAL50ADD.NS',
-    'HDFCPVTBAN': 'HDFCPVTBAN.NS','LICMFGOLD': 'LICMFGOLD.NS','SML100CASE': 'SML100CASE.NS',
-    'MONQ50': 'MONQ50.NS','ALPL30IETF': 'ALPL30IETF.NS','SENSEXIETF': 'SENSEXIETF.NS',
-    'MIDSMALL': 'MIDSMALL.NS','SBIBPB': 'SBIBPB.NS','NIF100BEES': 'NIF100BEES.NS',
-    'HDFCPSUBK': 'HDFCPSUBK.NS','GROWWEV': 'GROWWEV.NS','HDFCMID150': 'HDFCMID150.NS',
-    'CONSUMBEES': 'CONSUMBEES.NS','MOGOLD': 'MOGOLD.NS','INFRAIETF': 'INFRAIETF.NS',
-    'NIFTYBETF': 'NIFTYBETF.NS','MOSILVER': 'MOSILVER.NS','MASPTOP50': 'MASPTOP50.NS',
-    'ALPHAETF': 'ALPHAETF.NS','MONEXT50': 'MONEXT50.NS','MOTOUR': 'MOTOUR.NS',
-    'SILVERBND': 'SILVERBND.NS','MOLOWVOL': 'MOLOWVOL.NS','SMALL250': 'SMALL250.NS',
-    'MAHKTECH': 'MAHKTECH.NS','BANK10ADD': 'BANK10ADD.NS','PSUBANKADD': 'PSUBANKADD.NS',
-    'UNIONGOLD': 'UNIONGOLD.NS','MOVALUE': 'MOVALUE.NS','TOP100CASE': 'TOP100CASE.NS',
+FALLBACK_UNIVERSE = {
+    'SILVERBEES':'SILVERBEES.NS','GOLDBEES':'GOLDBEES.NS','NIFTYBEES':'NIFTYBEES.NS',
+    'TATSILV':'TATSILV.NS','HDFCSILVER':'HDFCSILVER.NS','SILVERIETF':'SILVERIETF.NS',
+    'TATAGOLD':'TATAGOLD.NS','GOLDIETF':'GOLDIETF.NS','ITBEES':'ITBEES.NS',
+    'SETFGOLD':'SETFGOLD.NS','BANKBEES':'BANKBEES.NS','HDFCGOLD':'HDFCGOLD.NS',
+    'SBISILVER':'SBISILVER.NS','PVTBANIETF':'PVTBANIETF.NS','SILVER':'SILVER.NS',
+    'PSUBNKBEES':'PSUBNKBEES.NS','JUNIORBEES':'JUNIORBEES.NS','GOLD1':'GOLD1.NS',
+    'HDFCSML250':'HDFCSML250.NS','MON100':'MON100.NS','MODEFENCE':'MODEFENCE.NS',
+    'MID150BEES':'MID150BEES.NS','PHARMABEES':'PHARMABEES.NS','METALIETF':'METALIETF.NS',
+    'CPSEETF':'CPSEETF.NS','MOREALTY':'MOREALTY.NS','NEXT50IETF':'NEXT50IETF.NS',
+    'AUTOBEES':'AUTOBEES.NS','ALPHA':'ALPHA.NS','MOMENTUM50':'MOMENTUM50.NS',
+    'GROWWPOWER':'GROWWPOWER.NS','MAFANG':'MAFANG.NS','MOM30IETF':'MOM30IETF.NS',
+    'MONQ50':'MONQ50.NS','OILIETF':'OILIETF.NS','EQUAL50ADD':'EQUAL50ADD.NS',
+    'CONSUMBEES':'CONSUMBEES.NS','INFRAIETF':'INFRAIETF.NS',
 }
-
-def load_universe_from_supabase():
-    """
-    Load ETF universe from Supabase etf_universe table.
-    Returns dict {symbol: symbol.NS} or falls back to hardcoded ETF_UNIVERSE.
-    """
-    try:
-        url = f"{SB_URL}/rest/v1/etf_universe?user_id=eq.default&select=symbols"
-        r   = requests.get(url, headers={
-            'apikey'       : SB_KEY,
-            'Authorization': f'Bearer {SB_KEY}',
-        })
-        if r.status_code == 200:
-            rows = r.json()
-            if rows and rows[0].get('symbols'):
-                import json as _json
-                syms = _json.loads(rows[0]['symbols'])
-                if isinstance(syms, list) and len(syms) > 0:
-                    universe = {s: f'{s}.NS' for s in syms}
-                    print(f'  Loaded {len(universe)} ETFs from Supabase universe')
-                    return universe
-    except Exception as e:
-        print(f'  Warning: could not load universe from Supabase: {e}')
-
-    print(f'  Falling back to hardcoded universe ({len(ETF_UNIVERSE)} ETFs)')
-    return ETF_UNIVERSE
-
 
 LOOKBACK_WEEKS = 13
 N_SLOTS        = 3
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# SUPABASE HELPERS
+# ─────────────────────────────────────────────────────────────────────────────
+def sb_get(path):
+    try:
+        r = requests.get(f'{SB_URL}/rest/v1/{path}', headers=SB_HDR, timeout=15)
+        if r.status_code == 200:
+            return r.json()
+    except Exception as e:
+        print(f'  SB GET error: {e}')
+    return None
+
+
 def sb_upsert(table, rows):
-    """Upsert rows into Supabase table. rows = list of dicts."""
     if not rows:
         return
-    r = requests.post(
-        f'{SB_URL}/rest/v1/{table}',
-        headers=SB_HEADERS,
-        json=rows
-    )
-    if r.status_code not in (200, 201):
-        print(f'  SB error {table}: {r.status_code} {r.text[:200]}')
-    return r
+    try:
+        r = requests.post(f'{SB_URL}/rest/v1/{table}', headers=SB_HDR, json=rows, timeout=15)
+        if r.status_code not in (200, 201, 204):
+            print(f'  SB upsert error {table}: {r.status_code} {r.text[:200]}')
+        else:
+            print(f'  SB upsert OK: {table} ({len(rows)} rows)')
+    except Exception as e:
+        print(f'  SB upsert exception: {e}')
 
 
-def fetch_prices(end_date, lookback_days=120, universe=None):
-    if universe is None:
-        universe = ETF_UNIVERSE
+# ─────────────────────────────────────────────────────────────────────────────
+# LOAD UNIVERSE FROM SUPABASE
+# ─────────────────────────────────────────────────────────────────────────────
+def load_universe():
+    """
+    Load ETF universe from Supabase etf_universe table.
+    Falls back to FALLBACK_UNIVERSE if Supabase unreachable or empty.
+    """
+    rows = sb_get('etf_universe?user_id=eq.default&select=symbols')
+    if rows and len(rows) > 0 and rows[0].get('symbols'):
+        try:
+            syms = json.loads(rows[0]['symbols'])
+            if isinstance(syms, list) and len(syms) > 0:
+                universe = {s: f'{s}.NS' for s in syms}
+                print(f'Loaded {len(universe)} ETFs from Supabase universe')
+                return universe
+        except Exception as e:
+            print(f'  Could not parse Supabase universe: {e}')
+    print(f'Using fallback universe ({len(FALLBACK_UNIVERSE)} ETFs)')
+    return FALLBACK_UNIVERSE
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LOAD SETTINGS FROM SUPABASE
+# ─────────────────────────────────────────────────────────────────────────────
+def load_settings():
+    """
+    Load strategy settings from Supabase app_settings table.
+    Falls back to defaults if not found.
+    """
+    defaults = {
+        'slots'    : 3,
+        'skim'     : 0.25,
+        'lookback' : 13,
+        'friction' : 0.0012,
+        'liquid'   : 0.06,
+        'capital'  : 300000,
+    }
+    rows = sb_get('app_settings?user_id=eq.default&select=settings')
+    if rows and len(rows) > 0 and rows[0].get('settings'):
+        try:
+            s = json.loads(rows[0]['settings'])
+            defaults.update(s)
+            print(f'Loaded settings from Supabase: slots={defaults["slots"]} lookback={defaults["lookback"]}')
+        except Exception as e:
+            print(f'  Could not parse settings: {e}')
+    else:
+        print('Using default settings')
+    return defaults
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PRICE FETCHING
+# ─────────────────────────────────────────────────────────────────────────────
+def fetch_prices(universe, lookback_weeks, end_date, lookback_days=120):
     start_date = end_date - timedelta(days=lookback_days)
     prices = {}
     total  = len(universe)
+
     for i, (name, ticker) in enumerate(universe.items(), 1):
         try:
             df = yf.download(
@@ -132,40 +134,57 @@ def fetch_prices(end_date, lookback_days=120, universe=None):
                 auto_adjust=True
             )
             if df.empty or len(df) < 20:
+                print(f'  [{i}/{total}] SKIP {name}: no data')
                 continue
-            close  = df['Close'].squeeze()
-            monday = close.resample('W-MON').last().dropna()
-            if len(monday) < LOOKBACK_WEEKS + 1:
+
+            close    = df['Close'].squeeze()
+            weekly   = close.resample('W-MON').last().dropna()
+
+            if len(weekly) < lookback_weeks + 1:
+                print(f'  [{i}/{total}] SKIP {name}: insufficient history ({len(weekly)} weeks)')
                 continue
-            current  = float(monday.iloc[-1])
-            w13ago   = float(monday.iloc[-LOOKBACK_WEEKS - 1])
+
+            current  = float(weekly.iloc[-1])
+            w13ago   = float(weekly.iloc[-lookback_weeks - 1])
             vel3m    = ((current - w13ago) / w13ago) * 100
-            last_mon = monday.index[-1]
-            future   = close.index[close.index > last_mon]
-            exec_px  = float(close.loc[future[0]]) if len(future) > 0 else current
-            exec_dt  = str(future[0].date()) if len(future) > 0 else str(end_date.date())
+
+            # Signal date = the Monday whose close we used
+            # Use iloc[-2] date if last entry is future, else iloc[-1]
+            # W-MON resampling: each label = the Monday of that week
+            # The last complete Monday is iloc[-1] if today >= that Monday
+            last_mon = weekly.index[-1]
+
+            # Execution price = next actual trading day after signal Monday
+            future  = close.index[close.index > last_mon]
+            exec_px = float(close.loc[future[0]]) if len(future) > 0 else current
+            exec_dt = str(future[0].date()) if len(future) > 0 else str(end_date.date())
+
             prices[name] = {
                 'current'     : round(current, 2),
                 'exec_price'  : round(exec_px, 2),
                 'w13ago'      : round(w13ago, 2),
                 'vel3m'       : round(vel3m, 4),
-                'signal_date' : str(monday.index[-1].date()),
+                'signal_date' : str(last_mon.date()),
                 'exec_date'   : exec_dt,
             }
-            print(f'  [{i}/{total}] OK {name}: {vel3m:+.2f}%')
+            print(f'  [{i}/{total}] {name}: {vel3m:+.2f}% close=₹{current}')
+
         except Exception as e:
             print(f'  [{i}/{total}] ERR {name}: {e}')
+
     return prices
 
 
-def generate_signal(prices):
+# ─────────────────────────────────────────────────────────────────────────────
+# SIGNAL GENERATION
+# ─────────────────────────────────────────────────────────────────────────────
+def generate_signal(prices, n_slots):
     ranked = sorted(
-        [(n, d) for n, d in prices.items() if d.get('vel3m') is not None],
+        [(n, d) for n, d in prices.items()],
         key=lambda x: x[1]['vel3m'], reverse=True
     )
-    top    = ranked[:N_SLOTS]
     signal = []
-    for i, (name, d) in enumerate(top):
+    for i, (name, d) in enumerate(ranked[:n_slots]):
         signal.append({
             'rank'       : i + 1,
             'etf'        : name,
@@ -179,124 +198,127 @@ def generate_signal(prices):
     return signal, ranked
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# PUSH SIGNAL HISTORY TO SUPABASE
+# ─────────────────────────────────────────────────────────────────────────────
 def push_signal_history(signal):
-    """Push this week's top3 to Supabase signal_history table."""
     rows = []
     for s in signal:
         rows.append({
-            'signal_date'   : s['signal_date'],
-            'rank'          : s['rank'],
-            'etf'           : s['etf'],
-            'vel3m'         : s['vel3m'],
-            'exec_price'    : s['exec_price'],
-            'entered_top3'  : s['signal_date'],
+            'signal_date' : s['signal_date'],
+            'rank'        : s['rank'],
+            'etf'         : s['etf'],
+            'vel3m'       : s['vel3m'],
+            'exec_price'  : s['exec_price'],
+            'entered_top3': s['signal_date'],
+            'action'      : s['action'],
         })
     sb_upsert('signal_history', rows)
-    print(f'  Pushed {len(rows)} rows to Supabase signal_history')
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# BACKFILL
+# ─────────────────────────────────────────────────────────────────────────────
 def backfill(from_date_str):
-    """Backfill signal_history from from_date to today, one week at a time."""
     from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
     today     = datetime.today()
     current   = from_date
 
-    print(f'\nBackfilling from {from_date_str} to {today.strftime("%Y-%m-%d")}')
-    print('This will take a while — downloading data for each week...\n')
+    # Load settings and universe once
+    settings  = load_settings()
+    universe  = load_universe()
+    n_slots   = settings.get('slots', 3)
+    lookback  = settings.get('lookback', 13)
 
-    # Load universe once for the entire backfill
-    universe = load_universe_from_supabase()
-    print(f'  Using {len(universe)} ETFs from universe\n')
-    week_num = 0
+    print(f'\nBackfilling {from_date_str} → {today.strftime("%Y-%m-%d")}')
+    print(f'Universe: {len(universe)} ETFs | Slots: {n_slots} | Lookback: {lookback}w\n')
+
+    week = 0
     while current <= today:
-        week_num += 1
-        print(f'\n--- Week {week_num}: signal date ~{current.strftime("%Y-%m-%d")} ---')
-        prices = fetch_prices(current, lookback_days=150, universe=universe)
+        week += 1
+        print(f'\n--- Week {week}: ~{current.strftime("%Y-%m-%d")} ---')
+        prices = fetch_prices(universe, lookback, current, lookback_days=150)
         if prices:
-            signal, _ = generate_signal(prices)
+            signal, _ = generate_signal(prices, n_slots)
             if signal:
                 push_signal_history(signal)
-                print(f'  Top 3: {[s["etf"] for s in signal]}')
+                print(f'  Top {n_slots}: {[s["etf"] for s in signal]}')
         current += timedelta(weeks=1)
 
-    print(f'\nBackfill complete. {week_num} weeks processed.')
+    print(f'\nBackfill complete. {week} weeks processed.')
 
 
-def main(run_date=None):
-    end_date = run_date or datetime.today()
+# ─────────────────────────────────────────────────────────────────────────────
+# MAIN — WEEKLY RUN
+# ─────────────────────────────────────────────────────────────────────────────
+def main():
+    now      = datetime.now()
+    end_date = datetime.today()
+
+    # Load settings and universe from Supabase
+    settings    = load_settings()
+    universe    = load_universe()
+    n_slots     = settings.get('slots', 3)
+    lookback    = settings.get('lookback', 13)
+
     print(f'Freedom 2040 — Signal Generator')
-    print(f'Universe : {len(ETF_UNIVERSE)} ETFs (turnover >= 1 Cr)')
-    print(f'Run date : {end_date.strftime("%Y-%m-%d %H:%M")}\n')
+    print(f'Run time : {now.strftime("%Y-%m-%d %H:%M:%S")} UTC')
+    print(f'Universe : {len(universe)} ETFs')
+    print(f'Settings : slots={n_slots} lookback={lookback}w\n')
 
-    # Load ETF universe from Supabase (or fallback to hardcoded)
-    universe       = load_universe_from_supabase()
-    prices         = fetch_prices(end_date, universe=universe)
-    signal, ranked = generate_signal(prices)
+    prices         = fetch_prices(universe, lookback, end_date)
+    signal, ranked = generate_signal(prices, n_slots)
 
     if signal:
         push_signal_history(signal)
 
+    # Build output for signal.json
+    sig_date = signal[0]['signal_date'] if signal else str(end_date.date())
+    exec_date = signal[0]['exec_date'] if signal else str(end_date.date())
+
     output = {
-        'generated_at': datetime.now().isoformat(),
-        'signal_date' : signal[0]['signal_date'] if signal else str(end_date.date()),
-        'exec_date'   : signal[0]['exec_date']   if signal else str(end_date.date()),
-        'top3'        : signal,
-        'full_ranking': [
-            {'rank': i+1, 'etf': n, 'vel3m': d['vel3m'],
-             'current_px': d['current'], 'exec_price': d['exec_price']}
+        'generated_at'  : now.isoformat(),
+        'generated_at_ist': (now + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M IST'),
+        'data_source'   : 'NSE EOD via yfinance (Monday closing prices, ~1hr delayed)',
+        'signal_date'   : sig_date,
+        'exec_date'     : exec_date,
+        'universe_size' : len(universe),
+        'top3'          : signal,
+        'full_ranking'  : [
+            {
+                'rank'       : i + 1,
+                'etf'        : n,
+                'vel3m'      : d['vel3m'],
+                'current_px' : d['current'],
+                'exec_price' : d['exec_price'],
+            }
             for i, (n, d) in enumerate(ranked)
         ],
-        'n_positive'  : sum(1 for _, d in ranked if d['vel3m'] > 0),
-        'n_total'     : len(ranked),
+        'n_positive': sum(1 for _, d in ranked if d['vel3m'] > 0),
+        'n_total'   : len(ranked),
     }
 
     os.makedirs('docs', exist_ok=True)
     with open('docs/signal.json', 'w') as f:
         json.dump(output, f, indent=2)
 
-    print(f'\nLoaded {len(prices)}/{len(ETF_UNIVERSE)} ETFs\n')
-    print('TOP 3 SIGNAL:')
-    print('-' * 65)
+    print(f'\n{"─"*60}')
+    print(f'TOP {n_slots} SIGNAL  |  {sig_date}  |  Execute: {exec_date}')
+    print(f'{"─"*60}')
     for s in signal:
-        print(f"  #{s['rank']}  {s['etf']:<15} {s['vel3m']:+.2f}%  exec ₹{s['exec_price']}")
-    print('-' * 65)
-    print(f"Signal: {output['signal_date']} | Execute: {output['exec_date']}")
-    print(f"Positive momentum: {output['n_positive']}/{output['n_total']}")
+        print(f"  #{s['rank']}  {s['etf']:<15} {s['vel3m']:+.2f}%  ₹{s['exec_price']}  → {s['action']}")
+    print(f'{"─"*60}')
+    print(f'Positive momentum: {output["n_positive"]}/{output["n_total"]}')
+    print(f'Generated at: {output["generated_at_ist"]}')
+    print(f'Data source: {output["data_source"]}')
+    print(f'\nWritten docs/signal.json | Pushed to Supabase signal_history')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--backfill', metavar='YYYY-MM-DD',
-                        help='Backfill signal history from this date to today')
+                        help='Backfill from this date to today')
     args = parser.parse_args()
-
-    if args.backfill:
-        backfill(args.backfill)
-    else:
-        main()ranked if d['vel3m'] > 0),
-        'n_total'     : len(ranked),
-    }
-
-    os.makedirs('docs', exist_ok=True)
-    with open('docs/signal.json', 'w') as f:
-        json.dump(output, f, indent=2)
-
-    print(f'\nLoaded {len(prices)}/{len(ETF_UNIVERSE)} ETFs\n')
-    print('TOP 3 SIGNAL:')
-    print('-' * 65)
-    for s in signal:
-        print(f"  #{s['rank']}  {s['etf']:<15} {s['vel3m']:+.2f}%  exec ₹{s['exec_price']}")
-    print('-' * 65)
-    print(f"Signal: {output['signal_date']} | Execute: {output['exec_date']}")
-    print(f"Positive momentum: {output['n_positive']}/{output['n_total']}")
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--backfill', metavar='YYYY-MM-DD',
-                        help='Backfill signal history from this date to today')
-    args = parser.parse_args()
-
     if args.backfill:
         backfill(args.backfill)
     else:
