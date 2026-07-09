@@ -2,8 +2,13 @@ name: Weekly Signal Generator
 
 on:
   schedule:
-    - cron: '0 11 * * 1'  # Every Monday 4:30pm IST (11:00 UTC)
-  workflow_dispatch:        # Allows manual trigger anytime from GitHub
+    - cron: '0 11 * * 1'   # Every Monday 4:30pm IST (11:00 UTC)
+  workflow_dispatch:
+    inputs:
+      backfill_date:
+        description: 'Backfill from date YYYY-MM-DD (leave empty for normal weekly run)'
+        required: false
+        default: ''
 
 jobs:
   generate-signal:
@@ -20,15 +25,22 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance pandas numpy
+        run: pip install yfinance pandas numpy requests openpyxl
 
-      - name: Generate signal
-        run: python scripts/generate_signal.py
+      - name: Run signal or backfill
+        run: |
+          if [ -n "${{ github.event.inputs.backfill_date }}" ]; then
+            echo "Running backfill from ${{ github.event.inputs.backfill_date }}"
+            python scripts/generate_signal.py --backfill ${{ github.event.inputs.backfill_date }}
+          else
+            echo "Running weekly signal"
+            python scripts/generate_signal.py
+          fi
 
-      - name: Commit signal
+      - name: Commit signal.json
         run: |
           git config user.name "Freedom2040 Bot"
           git config user.email "bot@freedom2040"
           git add docs/signal.json
-          git diff --staged --quiet || git commit -m "Signal update $(date '+%Y-%m-%d')"
+          git diff --staged --quiet || git commit -m "Signal update $(date '+%Y-%m-%d %H:%M')"
           git push
