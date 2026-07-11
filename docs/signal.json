@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-11T03:03:39.587253",
-  "generated_at_ist": "2026-07-11 08:33 IST",
+  "generated_at": "2026-07-11T03:30:19.900601",
+  "generated_at_ist": "2026-07-11 09:00 IST",
   "data_source": "NSE EOD via yfinance (Monday closing prices, ~1hr delayed)",
   "signal_date": "2026-07-13",
   "exec_date": "2026-07-11",
