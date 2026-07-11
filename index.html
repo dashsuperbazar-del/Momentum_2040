@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freedom 2040</title>
+<style>
+:root {
+  --bg:#f5f5f0;--surface:#fff;--surface2:#f9f9f7;--border:#e5e5e0;
+  --text:#1a1a18;--muted:#6b6b65;--accent:#2563eb;--accent-bg:#eff6ff;
+  --success:#16a34a;--success-bg:#f0fdf4;--danger:#dc2626;--danger-bg:#fef2f2;
+  --warning:#d97706;--warning-bg:#fffbeb;--purple:#7c3aed;--purple-bg:#f5f3ff;
+  --radius:8px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#141412;--surface:#1e1e1c;--surface2:#252523;--border:#2e2e2c;
+    --text:#f0f0ec;--muted:#8a8a84;--accent-bg:#1e3a5f;
+    --success-bg:#14290d;--danger-bg:#2d0a0a;--warning-bg:#2d1a00;--purple-bg:#1e1040;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+.app{max-width:920px;margin:0 auto;padding:1.5rem 1rem}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px}
+.logo{font-size:20px;font-weight:700}.logo span{color:var(--accent)}
+.updated{font-size:12px;color:var(--muted);margin-top:2px}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:1.5rem;overflow-x:auto}
+.nav-btn{padding:9px 16px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:14px;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.page{display:none}.page.active{display:block}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
+.metric-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:700}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:12px;font-weight:600;margin-bottom:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.btn{padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);cursor:pointer;font-size:14px}
+.btn:hover{background:var(--surface2)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{opacity:.9}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{color:var(--danger);border-color:var(--danger)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.badge-buy{background:var(--success-bg);color:var(--success)}
+.badge-sell,.badge-exit{background:var(--danger-bg);color:var(--danger)}
+.badge-hold{background:var(--accent-bg);color:var(--accent)}
+.badge-skim{background:var(--purple-bg);color:var(--purple)}
+.badge-liquid,.badge-liquidbees{background:var(--warning-bg);color:var(--warning)}
+.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:1rem;border-left:3px solid}
+.alert-warn{background:var(--warning-bg);border-color:var(--warning);color:var(--warning)}
+.alert-info{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.alert-success{background:var(--success-bg);border-color:var(--success);color:var(--success)}
+.signal-row{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)}
+.signal-row:last-child{border-bottom:none}
+.signal-rank{font-size:30px;font-weight:800;color:var(--border);min-width:36px;line-height:1}
+.rank-1{color:#f59e0b}.rank-2{color:#9ca3af}.rank-3{color:#b45309}
+.signal-body{flex:1}
+.signal-etf{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.signal-meta{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.8}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);font-size:12px}
+td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.green{color:var(--success)}.red{color:var(--danger)}.amber{color:var(--warning)}
+input,select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:14px}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:12px}
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px}
+.progress-fill.warn{background:var(--warning)}
+.progress-fill.good{background:var(--success)}
+.fy-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.fy-row:last-child{border-bottom:none}
+.confirm-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.confirm-item:last-child{border-bottom:none}
+.confirm-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.confirm-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding-left:26px}
+.full-ranking{max-height:420px;overflow-y:auto}
+.bt-filter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.bt-filter select,.bt-filter input{width:auto;padding:6px 10px;font-size:13px}
+.bt-trade-row{display:grid;grid-template-columns:90px 80px 80px 90px 90px 70px 80px;gap:4px;padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;align-items:center}
+.bt-trade-row:hover{background:var(--surface2)}
+.bt-header{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;background:var(--surface2);border-radius:var(--radius) var(--radius) 0 0}
+@media(max-width:600px){
+  .metric-value{font-size:18px}
+  .signal-etf{font-size:16px}
+  .confirm-inputs{grid-template-columns:1fr 1fr}
+  th,td{padding:8px 6px}
+  .bt-trade-row{grid-template-columns:1fr 1fr 1fr;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div>
+    <div class="logo">Freedom <span>2040</span></div>
+    <div class="updated" id="last-updated">Loading...</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px" id="data-source-info">
+      ⏱ Prices are NSE end-of-day (Monday close), not real-time
+    </div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-sm" onclick="location.reload()">↻ Refresh</button>
+  </div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showPage('signal',this)">📡 Signal</button>
+  <button class="nav-btn" onclick="showPage('portfolio',this)">💼 Portfolio</button>
+  <button class="nav-btn" onclick="showPage('trades',this)">📋 Trade log</button>
+  <button class="nav-btn" onclick="showPage('backtest',this)">📊 Backtest</button>
+  <button class="nav-btn" onclick="showPage('tax',this)">🧾 Tax ledger</button>
+  <button class="nav-btn" onclick="showPage('universe',this)">🗂️ Universe</button>
+  <button class="nav-btn" onclick="showPage('settings',this)">⚙️ Settings</button>
+</nav>
+
+<!-- SIGNAL PAGE -->
+<div id="page-signal" class="page active">
+  <div id="signal-loading" class="alert alert-info">Loading this week's signal...</div>
+  <div id="signal-body" style="display:none">
+    <div class="metric-grid" id="sig-metrics"></div>
+    <div id="action-alerts"></div>
+    <div class="card">
+      <div class="card-title">This week's top 3</div>
+      <div id="top3-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Confirm your trades</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">
+        Enter units and actual execution price for trades you completed. Untick any you skipped.
+      </p>
+      <div id="confirm-list"></div>
+      <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveConfirmed()">Save confirmed trades</button>
+        <button class="btn" onclick="toggleRanking()">View full ranking</button>
+      </div>
+    </div>
+    <div class="card" id="full-ranking-card" style="display:none">
+      <div class="card-title">Full ranking — all ETFs</div>
+      <div class="full-ranking" id="full-ranking-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO PAGE -->
+<div id="page-portfolio" class="page">
+  <div class="metric-grid" id="port-metrics"></div>
+  <div class="card">
+    <div class="card-title">Open positions</div>
+    <div id="positions-body"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Add manual trade</div>
+    <div class="form-row">
+      <div><label>ETF</label><input id="m-etf" placeholder="e.g. GOLDBEES"></div>
+      <div><label>Type</label>
+        <select id="m-type"><option>BUY</option><option>SELL</option><option>SKIM</option></select>
+      </div>
+      <div><label>Date</label><input id="m-date" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Units</label><input id="m-units" type="number" step="0.001" placeholder="0"></div>
+      <div><label>Price (₹)</label><input id="m-price" type="number" step="0.01" placeholder="0.00"></div>
+      <div><label>Extra charges (₹)</label><input id="m-charges" type="number" value="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addManualTrade()">Add trade</button>
+  </div>
+</div>
+
+<!-- TRADE LOG PAGE -->
+<div id="page-trades" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+    <div style="font-size:14px;color:var(--muted)" id="trade-count"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="exportCSV()">⬇ CSV</button>
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>Date</th><th>ETF</th><th>Type</th><th>Units</th>
+        <th>Price</th><th>Value</th><th>P&amp;L</th><th>Friction</th><th></th>
+      </tr></thead>
+      <tbody id="trade-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- BACKTEST PAGE -->
+<div id="page-backtest" class="page">
+  <div class="card">
+    <div class="card-title">Signal backtest — simulated trades</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">
+      Shows what would have happened if you followed every signal. Buy = entered top 3. Sell = dropped out of top 3. Equal weight assumed.
+    </p>
+    <div class="bt-filter">
+      <div>
+        <label>From</label>
+        <input type="date" id="bt-from">
+      </div>
+      <div>
+        <label>To</label>
+        <input type="date" id="bt-to">
+      </div>
+      <div style="display:flex;gap:6px;align-items:flex-end">
+        <button class="btn btn-sm" onclick="setBtRange(6)">6M</button>
+        <button class="btn btn-sm" onclick="setBtRange(12)">1Y</button>
+        <button class="btn btn-sm" onclick="setBtRange(24)">2Y</button>
+        <button class="btn btn-primary btn-sm" onclick="renderBacktest()">Run</button>
+      </div>
+    </div>
+    <div id="bt-status" style="font-size:13px;color:var(--muted)"></div>
+  </div>
+
+  <div class="metric-grid" id="bt-metrics" style="display:none"></div>
+
+  <div class="card" id="bt-trades-card" style="display:none">
+    <div class="card-title">Simulated trade history</div>
+    <div style="overflow-x:auto">
+      <div class="bt-trade-row bt-header">
+        <span>ETF</span><span>Entry</span><span>Exit</span>
+        <span>Entry ₹</span><span>Exit ₹</span><span>Weeks</span><span>Return</span>
+      </div>
+      <div id="bt-trades-body"></div>
+    </div>
+  </div>
+
+  <div class="card" id="bt-open-card" style="display:none">
+    <div class="card-title">Currently open (still in top 3)</div>
+    <div style="overflow-x:auto">
+      <div class="bt-trade-row bt-header">
+        <span>ETF</span><span>Entry</span><span>Still in</span>
+        <span>Entry ₹</span><span>Current ₹</span><span>Weeks</span><span>Return</span>
+      </div>
+      <div id="bt-open-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAX PAGE -->
+<div id="page-tax" class="page">
+  <div class="metric-grid" id="tax-metrics"></div>
+  <div class="card">
+    <div class="card-title">FY-wise tax breakdown (Apr–Mar)</div>
+    <div id="fy-rows"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Tax rules applied</div>
+    <div style="font-size:13px;color:var(--muted);line-height:2.2">
+      <div>• STCG 20% on equity ETF gains held ≤ 365 days</div>
+      <div>• LTCG 12.5% on gains held &gt; 365 days (above ₹1L exemption per year)</div>
+      <div>• Losses in a FY offset gains before tax — no tax on net loss years</div>
+      <div>• Net loss carried forward to offset next FY gains</div>
+      <div>• Tax settled as lump sum at start of April each year</div>
+      <div>• Skim: only the realised surplus is taxed; cost basis stays with position</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+
+<!-- UNIVERSE PAGE -->
+<div id="page-universe" class="page">
+  <div class="metric-grid" id="uni-metrics"></div>
+  <div class="card">
+    <div class="card-title">Add ETFs</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <div style="flex:1;min-width:180px">
+        <label>Single NSE symbol</label>
+        <input id="uni-single" placeholder="e.g. GOLDBEES" style="text-transform:uppercase">
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" onclick="addSingleETF()">Add</button>
+      </div>
+    </div>
+    <div>
+      <label>Bulk paste — comma or newline separated</label>
+      <textarea id="uni-bulk" rows="4" placeholder="GOLDBEES, SILVERBEES&#10;or one per line"
+        style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);
+               background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;resize:vertical"></textarea>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="addBulkETFs()">Add all</button>
+      <button class="btn" onclick="document.getElementById('uni-bulk').value=''">Clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Upload Excel / CSV</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">
+      Upload your Master ETF sheet. The app reads the NSE symbol column automatically.
+      Supported: .xlsx, .csv
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px">
+      <div style="flex:1;min-width:150px">
+        <label>Column name containing NSE symbols</label>
+        <input id="uni-col" placeholder="NSE Code" value="NSE Code">
+      </div>
+      <button class="btn btn-primary" onclick="document.getElementById('uni-file').click()">📂 Choose file</button>
+    </div>
+    <input type="file" id="uni-file" style="display:none" accept=".csv,.xlsx" onchange="uploadETFFile(event)">
+    <div id="uni-upload-status" style="font-size:13px;color:var(--muted)"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Current universe (<span id="uni-count">0</span> ETFs)</div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+      <input id="uni-search" placeholder="Search..." style="max-width:180px" oninput="renderUniverse()">
+      <button class="btn btn-sm" onclick="resetToDefault()">Reset to default (38)</button>
+      <button class="btn btn-sm btn-danger" onclick="clearAllETFs()">Clear all</button>
+    </div>
+    <div id="uni-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sync status</div>
+    <div id="uni-sync-status" style="font-size:13px;color:var(--muted)">Not synced yet.</div>
+    <div style="margin-top:8px">
+      <button class="btn btn-primary" onclick="syncUniverseToSupabase()">Save to Supabase now</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">
+      Changes auto-save when you add/remove. Python script reads this list every Monday.
+    </p>
+  </div>
+</div>
+
+<div id="page-settings" class="page">
+  <div class="card">
+    <div class="card-title">Strategy parameters</div>
+    <div class="form-row">
+      <div><label>Initial capital (₹)</label><input id="s-capital" type="number" value="300000"></div>
+      <div><label>Slots</label><input id="s-slots" type="number" value="3" min="1" max="5"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Skim threshold (%)</label><input id="s-skim" type="number" value="25"></div>
+      <div><label>LIQUIDBEES rate (% pa)</label><input id="s-liquid" type="number" value="6"></div>
+    </div>
+    <div class="form-row">
+      <div><label>Friction (% of trade)</label><input id="s-friction" type="number" value="0.12" step="0.01"></div>
+      <div><label>Lookback weeks</label><input id="s-lookback" type="number" value="13"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveSettings()">Save settings</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Supabase connection</div>
+    <div id="sb-connection-status" style="font-size:13px;padding:8px 0"></div>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px">
+      Connected to: <strong>scnvnfrvxwrdwskcktnj.supabase.co</strong>
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">GitHub token</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">
+      Paste your GitHub Personal Access Token (workflow scope). Stored in Supabase.
+    </p>
+    <div class="form-row">
+      <div><label>Token (ghp_...)</label>
+        <input id="s-gh-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="off">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <button class="btn btn-primary" onclick="saveGHToken()">Save token</button>
+      <span id="gh-token-status" style="font-size:13px"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Backfill signal history</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">
+      Triggers a GitHub Action to download historical data and populate Supabase with past signals. Run once. Takes ~15 mins.
+    </p>
+    <div class="form-row">
+      <div><label>Backfill from date</label><input id="bf-date" type="date" value="2026-01-01"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="triggerBackfill()">▶ Run backfill on GitHub</button>
+      <button class="btn" onclick="triggerWeeklySignal()">⚡ Run signal now</button>
+    </div>
+    <div id="bf-status" style="margin-top:10px;font-size:13px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Data management</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="exportCSV()">⬇ Export trades CSV</button>
+      <button class="btn btn-danger" onclick="clearAll()">🗑 Clear all local data</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .app -->
+<script>
+
+'use strict';
+
+// ─────────────────────────────────────────────
+// SUPABASE CONFIG
+// ─────────────────────────────────────────────
+const SB_URL = 'https://scnvnfrvxwrdwskcktnj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjbnZuZnJ2eHdyZHdza2NrdG5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MDE1MjYsImV4cCI6MjA5ODk3NzUyNn0.GmJ-C5mZORvPGgdp2JFDlZXamBQRwUOgAZjBmHm69C4';
+const GH_TOKEN = '';
+const GH_REPO  = 'dashsuperbazar-del/Momentum_2040';
+const GH_WF    = 'signal.yml';
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let S = {
+  trades   : [],
+  positions: {},
+  fyData   : {},
+  fyLossCf : 0,
+  settings : {capital:300000,slots:3,skim:0.25,liquid:0.06,friction:0.0012,lookback:13},
+  universe : [],
+  prices   : {},
+};
+let pendingConfirms = [];
+
+// ─────────────────────────────────────────────
+// LOCAL STORAGE
+// ─────────────────────────────────────────────
+const LS = 'freedom2040_v3';
+function loadLocal(){ try{ const r=localStorage.getItem(LS); if(r) Object.assign(S,JSON.parse(r)); }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){} }
+
+// ─────────────────────────────────────────────
+// SUPABASE HELPER
+// ─────────────────────────────────────────────
+async function sbFetch(path, opts={}){
+  const base = SB_URL.replace(/\/$/,'');
+  try{
+    const r = await fetch(`${base}/rest/v1/${path}`,{
+      headers:{
+        'apikey'       : SB_KEY,
+        'Authorization': 'Bearer '+SB_KEY,
+        'Content-Type' : 'application/json',
+        'Prefer'       : 'return=representation',
+        ...(opts.headers||{})
+      },
+      ...opts
+    });
+    if(!r.ok && r.status !== 204) return null;
+    if(r.status === 204) return true;
+    return r.json();
+  }catch(e){ return null; }
+}
+
+// ─────────────────────────────────────────────
+// SETTINGS — save/load from Supabase
+// ─────────────────────────────────────────────
+async function saveSettings(){
+  S.settings = {
+    capital  : parseFloat(document.getElementById('s-capital').value),
+    slots    : parseInt(document.getElementById('s-slots').value),
+    skim     : parseFloat(document.getElementById('s-skim').value)/100,
+    liquid   : parseFloat(document.getElementById('s-liquid').value)/100,
+    friction : parseFloat(document.getElementById('s-friction').value)/100,
+    lookback : parseInt(document.getElementById('s-lookback').value),
+  };
+  saveLocal();
+  await saveSettingsToSupabase();
+  alert('Settings saved to Supabase — Python script will use these next run.');
+}
+
+function loadSettingsForm(){
+  const s=S.settings;
+  document.getElementById('s-capital').value=s.capital;
+  document.getElementById('s-slots').value=s.slots;
+  document.getElementById('s-skim').value=s.skim*100;
+  document.getElementById('s-liquid').value=s.liquid*100;
+  document.getElementById('s-friction').value=s.friction*100;
+  document.getElementById('s-lookback').value=s.lookback;
+  // Check Supabase connection
+  sbFetch('trades?select=id&limit=1').then(r=>{
+    const el=document.getElementById('sb-connection-status');
+    el.style.color=r!==null?'var(--success)':'var(--danger)';
+    el.textContent=r!==null?'✅ Supabase connected and working.':'❌ Supabase connection failed. Check your project settings.';
+  });
+}
+
+async function saveSettingsToSupabase(){
+  const s = S.settings;
+  await sbFetch('app_settings', {
+    method :'POST',
+    headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body   : JSON.stringify({user_id:'default', settings: JSON.stringify(s), updated_at: new Date().toISOString()})
+  });
+}
+
+async function loadSettingsFromSupabase(){
+  const rows = await sbFetch('app_settings?user_id=eq.default&select=settings');
+  if(rows && rows.length > 0 && rows[0].settings){
+    try{
+      const s = JSON.parse(rows[0].settings);
+      Object.assign(S.settings, s);
+      saveLocal();
+      return true;
+    }catch(e){}
+  }
+  return false;
+}
+
+// ─────────────────────────────────────────────
+// ETF UNIVERSE MANAGEMENT
+// ─────────────────────────────────────────────
+const DEFAULT_UNIVERSE = [
+  'SILVERBEES','GOLDBEES','NIFTYBEES','TATSILV','HDFCSILVER','SILVERIETF',
+  'TATAGOLD','GOLDIETF','ITBEES','SETFGOLD','BANKBEES','HDFCGOLD','SBISILVER',
+  'PVTBANIETF','SILVER','PSUBNKBEES','JUNIORBEES','GOLD1','HDFCSML250',
+  'MON100','MODEFENCE','MID150BEES','PHARMABEES','METALIETF','CPSEETF',
+  'MOREALTY','NEXT50IETF','AUTOBEES','ALPHA','MOMENTUM50','GROWWPOWER',
+  'MAFANG','MOM30IETF','MONQ50','OILIETF','EQUAL50ADD','CONSUMBEES','INFRAIETF'
+];
+
+function getUniverse(){ return S.universe && S.universe.length ? S.universe : [...DEFAULT_UNIVERSE]; }
+
+async function loadUniverseFromSupabase(){
+  const rows = await sbFetch('etf_universe?user_id=eq.default&select=symbols');
+  if(rows && rows.length > 0 && rows[0].symbols){
+    try{
+      const syms = JSON.parse(rows[0].symbols);
+      if(Array.isArray(syms) && syms.length > 0){
+        S.universe = syms;
+        saveLocal();
+        return true;
+      }
+    }catch(e){}
+  }
+  if(!S.universe || !S.universe.length) S.universe = [...DEFAULT_UNIVERSE];
+  return false;
+}
+
+async function syncUniverseToSupabase(){
+  const syms = getUniverse();
+  const el   = document.getElementById('uni-sync-status');
+  if(el) el.textContent = 'Saving...';
+  try{
+    const res = await fetch(SB_URL+'/rest/v1/etf_universe',{
+      method :'POST',
+      headers:{
+        'apikey'       : SB_KEY,
+        'Authorization': 'Bearer '+SB_KEY,
+        'Content-Type' : 'application/json',
+        'Prefer'       : 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify({user_id:'default', symbols:JSON.stringify(syms), updated_at:new Date().toISOString()})
+    });
+    if(res.ok || res.status===204){
+      if(el){ el.style.color='var(--success)'; el.textContent='✅ Saved '+syms.length+' ETFs to Supabase. Python script will use this list next run.'; }
+    } else {
+      const t = await res.text();
+      throw new Error(res.status+': '+t);
+    }
+  }catch(e){
+    if(el){ el.style.color='var(--danger)'; el.textContent='❌ Save failed: '+e.message; }
+  }
+}
+
+async function addSingleETF(){
+  const val = (document.getElementById('uni-single').value||'').trim().toUpperCase().replace(/\.NS$/i,'');
+  if(!val){ alert('Enter an ETF symbol.'); return; }
+  const uni = getUniverse();
+  if(uni.includes(val)){ alert(val+' already in universe.'); return; }
+  S.universe = [...uni, val];
+  saveLocal();
+  document.getElementById('uni-single').value='';
+  renderUniverse();
+  await syncUniverseToSupabase();
+}
+
+async function addBulkETFs(){
+  const raw = document.getElementById('uni-bulk').value||'';
+  if(!raw.trim()){ alert('Paste ETF symbols first.'); return; }
+  const syms = raw.split(/[,\n\r]+/)
+    .map(s=>s.trim().toUpperCase().replace(/\.NS$/i,'').replace(/[^A-Z0-9]/g,''))
+    .filter(s=>s.length>=2 && s.length<=20);
+  const uni  = getUniverse();
+  const news = syms.filter(s=>!uni.includes(s));
+  if(!news.length){ alert('All symbols already in universe.'); return; }
+  S.universe = [...uni, ...news];
+  saveLocal();
+  document.getElementById('uni-bulk').value='';
+  renderUniverse();
+  await syncUniverseToSupabase();
+  alert('Added '+news.length+' ETF(s): '+news.join(', '));
+}
+
+async function uploadETFFile(e){
+  const file = e.target.files[0]; if(!file) return;
+  const statusEl = document.getElementById('uni-upload-status');
+  statusEl.textContent = 'Reading file...';
+  statusEl.style.color = 'var(--muted)';
+
+  const col = (document.getElementById('uni-col').value||'NSE Code').trim();
+
+  try{
+    const text = await file.text();
+    let symbols = [];
+
+    if(file.name.endsWith('.csv')){
+      // Parse CSV
+      const lines = text.split('\n').filter(l=>l.trim());
+      if(!lines.length){ throw new Error('Empty file'); }
+      const headers = lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+      const colIdx  = headers.findIndex(h=>h.toLowerCase()===col.toLowerCase());
+      if(colIdx < 0){ throw new Error(`Column "${col}" not found. Available: ${headers.join(', ')}`); }
+      for(const line of lines.slice(1)){
+        const cells = line.split(',');
+        const val   = (cells[colIdx]||'').trim().replace(/"/g,'').toUpperCase();
+        // Strip NSE: prefix if present
+        const sym = val.replace(/^NSE:/i,'').replace(/\.NS$/i,'').replace(/[^A-Z0-9]/g,'');
+        if(sym.length >= 2 && sym.length <= 20) symbols.push(sym);
+      }
+    } else {
+      // For xlsx — we can't parse binary in browser without a library
+      // Fallback: ask user to save as CSV
+      throw new Error('For Excel files: File → Save As → CSV, then upload the CSV. Or paste symbols directly in bulk paste above.');
+    }
+
+    // Deduplicate
+    symbols = [...new Set(symbols)];
+    if(!symbols.length){ throw new Error('No valid NSE symbols found in column "'+col+'"'); }
+
+    const uni  = getUniverse();
+    const news = symbols.filter(s=>!uni.includes(s));
+    S.universe = [...new Set([...uni, ...symbols])];
+    saveLocal();
+    renderUniverse();
+    await syncUniverseToSupabase();
+    statusEl.style.color = 'var(--success)';
+    statusEl.textContent = '✅ Added '+news.length+' new ETFs ('+symbols.length+' total from file). Universe now has '+S.universe.length+' ETFs.';
+  }catch(err){
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = '❌ '+err.message;
+  }
+  // Reset file input
+  e.target.value = '';
+}
+
+async function removeETF(sym){
+  S.universe = getUniverse().filter(s=>s!==sym);
+  saveLocal();
+  renderUniverse();
+  await syncUniverseToSupabase();
+}
+
+async function resetToDefault(){
+  if(!confirm('Reset to default 38 ETF universe?')) return;
+  S.universe = [...DEFAULT_UNIVERSE];
+  saveLocal();
+  renderUniverse();
+  await syncUniverseToSupabase();
+}
+
+async function clearAllETFs(){
+  if(!confirm('Remove all ETFs? Signal cannot run with empty universe.')) return;
+  S.universe = [];
+  saveLocal();
+  renderUniverse();
+  await syncUniverseToSupabase();
+}
+
+function renderUniverse(){
+  const uni      = getUniverse();
+  const search   = (document.getElementById('uni-search')?.value||'').toUpperCase().trim();
+  const filtered = search ? uni.filter(s=>s.includes(search)) : uni;
+
+  const countEl = document.getElementById('uni-count');
+  if(countEl) countEl.textContent = uni.length;
+
+  const metricsEl = document.getElementById('uni-metrics');
+  if(metricsEl) metricsEl.innerHTML = `
+    <div class="metric"><div class="metric-label">Total ETFs</div><div class="metric-value">${uni.length}</div></div>
+    <div class="metric"><div class="metric-label">vs default</div>
+      <div class="metric-value ${uni.length===DEFAULT_UNIVERSE.length?'':'amber'}">${uni.length-DEFAULT_UNIVERSE.length>=0?'+':''}${uni.length-DEFAULT_UNIVERSE.length}</div></div>
+    <div class="metric"><div class="metric-label">Showing</div><div class="metric-value">${filtered.length}</div></div>
+  `;
+
+  const listEl = document.getElementById('uni-list');
+  if(!listEl) return;
+
+  if(!uni.length){
+    listEl.innerHTML='<p style="color:var(--danger);font-size:13px">⚠️ Universe is empty — add ETFs before next signal run.</p>';
+    return;
+  }
+  listEl.innerHTML =
+    '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+    filtered.map(sym=>`
+      <div style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px 4px 10px;
+                  background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">
+        <span style="font-weight:600">${sym}</span>
+        <button onclick="removeETF('${sym}')"
+          style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0 2px;line-height:1">×</button>
+      </div>`).join('') +
+    '</div>' +
+    (search && filtered.length < uni.length ? `<p style="font-size:12px;color:var(--muted);margin-top:8px">${filtered.length} of ${uni.length} shown</p>` : '');
+}
+
+// ─────────────────────────────────────────────
+// GITHUB WORKFLOW TRIGGER
+// ─────────────────────────────────────────────
+async function triggerBackfill(){
+  const date = document.getElementById('bf-date').value;
+  const el   = document.getElementById('bf-status');
+  if(!date){el.textContent='Pick a date first.';return;}
+  el.style.color='var(--muted)';
+  el.textContent='Triggering GitHub Action…';
+  try{
+    const r = await fetch(
+      'https://api.github.com/repos/dashsuperbazar-del/Momentum_2040/actions/workflows/signal.yml/dispatches',
+      {
+        method:'POST',
+        headers:{
+          'Authorization':'Bearer ',
+          'Accept':'application/vnd.github+json',
+          'Content-Type':'application/json',
+        },
+        body: JSON.stringify({
+          ref:'main',
+          inputs:{ backfill_date: date }
+        })
+      }
+    );
+    if(r.status===204){
+      el.style.color='var(--success)';
+      el.textContent='✅ Backfill triggered. Check GitHub Actions tab — takes ~15 mins to complete.';
+    } else {
+      const txt = await r.text();
+      el.style.color='var(--danger)';
+      el.textContent='❌ Failed ('+r.status+'): '+txt.slice(0,120);
+    }
+  }catch(e){
+    el.style.color='var(--danger)';
+    el.textContent='❌ Network error: '+e.message;
+  }
+}
+
+async function triggerWeeklySignal(){
+  const el = document.getElementById('bf-status');
+  if(el){ el.style.color='var(--muted)'; el.textContent='Triggering signal run...'; }
+  try{
+    const r = await fetch(
+      `https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WF}/dispatches`,
+      { method:'POST',
+        headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+        body: JSON.stringify({ref:'main', inputs:{backfill_date:''}})
+      }
+    );
+    if(r.status===204){
+      if(el){ el.style.color='var(--success)'; el.textContent='✅ Signal run triggered! Check GitHub Actions. Takes ~5 mins.'; }
+    } else {
+      const t = await r.text();
+      throw new Error(r.status+': '+t);
+    }
+  }catch(e){
+    if(el){ el.style.color='var(--danger)'; el.textContent='❌ Trigger failed: '+e.message; }
+  }
+}
+
+// ─────────────────────────────────────────────
+// SIGNAL
+// ─────────────────────────────────────────────
+async function loadSignal(){
+  try{
+    let res = await fetch('signal.json?t='+Date.now());
+    if(!res.ok) res = await fetch('https://dashsuperbazar-del.github.io/Momentum_2040/signal.json?t='+Date.now());
+    if(!res.ok) throw new Error('not found');
+    const data = await res.json();
+    // Cache prices
+    (data.full_ranking||[]).forEach(r=>{ S.prices[r.etf]={current:r.current_px,exec:r.exec_price}; });
+    // Update header
+    const ist = data.generated_at_ist || (data.generated_at||'').slice(0,16).replace('T',' ')+' UTC';
+    const src = data.data_source || 'NSE EOD via yfinance (Monday closing prices)';
+    const uni = data.universe_size ? ` | Universe: ${data.universe_size} ETFs` : '';
+    const el  = document.getElementById('last-updated');
+    if(el) el.textContent = `Signal: ${data.signal_date} | Execute: ${data.exec_date}${uni}`;
+    const si  = document.getElementById('data-source-info');
+    if(si) si.textContent = `⏱ Fetched: ${ist} | ${src}`;
+    return data;
+  }catch(e){
+    const el = document.getElementById('signal-loading');
+    if(el){ el.innerHTML='⚠️ signal.json not found. Go to Settings → Run signal now.'; el.className='alert alert-warn'; }
+    return null;
+  }
+}
+
+
+async function loadSignalHistory(fromDate, toDate){
+  let path = `signal_history?order=signal_date.asc&select=*`;
+  if(fromDate) path += `&signal_date=gte.${fromDate}`;
+  if(toDate)   path += `&signal_date=lte.${toDate}`;
+  return await sbFetch(path) || [];
+}
+
+function renderSignal(data){
+  const held = Object.keys(S.positions);
+  const top  = data.top3;
+
+  document.getElementById('sig-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Signal date</div>
+      <div class="metric-value" style="font-size:16px">${data.signal_date}</div></div>
+    <div class="metric"><div class="metric-label">Execute on</div>
+      <div class="metric-value" style="font-size:16px">${data.exec_date}</div></div>
+    <div class="metric"><div class="metric-label">Positive momentum</div>
+      <div class="metric-value">${data.n_positive} / ${data.n_total}</div></div>
+    <div class="metric"><div class="metric-label">Market mood</div>
+      <div class="metric-value ${data.n_positive>data.n_total*0.65?'green':data.n_positive>data.n_total*0.4?'amber':'red'}" style="font-size:16px">
+        ${data.n_positive>data.n_total*0.65?'Bull':data.n_positive>data.n_total*0.4?'Mixed':'Bear'}
+      </div></div>`;
+
+  const alerts=[];
+  held.forEach(etf=>{
+    const inTop=top.find(t=>t.etf===etf);
+    if(!inTop){
+      alerts.push(`<div class="alert alert-warn"><strong>Exit:</strong> ${etf} dropped out of top ${S.settings.slots} — sell at execution price</div>`);
+    } else {
+      const pos=S.positions[etf];
+      const cur=S.prices[etf]?.current||pos.avgPrice;
+      const gain=(cur-pos.avgPrice)/pos.avgPrice*100;
+      if(gain>=S.settings.skim*100){
+        alerts.push(`<div class="alert alert-warn"><strong>Skim:</strong> ${etf} up ${gain.toFixed(1)}% — sell surplus above cost basis</div>`);
+      }
+    }
+  });
+  document.getElementById('action-alerts').innerHTML=alerts.join('');
+
+  const rc=['rank-1','rank-2','rank-3'];
+  document.getElementById('top3-list').innerHTML=top.map((t,i)=>{
+    const isHeld=held.includes(t.etf);
+    const vel=t.vel3m;
+    const isLiq=vel<0;
+    const pos=S.positions[t.etf];
+    const cur=S.prices[t.etf]?.current||0;
+    const gain=pos?(cur-pos.avgPrice)/pos.avgPrice*100:null;
+    const isSkim=gain!==null&&gain>=S.settings.skim*100;
+    let badge='';
+    if(isLiq)badge='<span class="badge badge-liquid">LIQUIDBEES</span>';
+    else if(isSkim)badge='<span class="badge badge-skim">SKIM</span>';
+    else if(isHeld)badge='<span class="badge badge-hold">HOLD</span>';
+    else badge='<span class="badge badge-buy">BUY</span>';
+    return `<div class="signal-row">
+      <div class="signal-rank ${rc[i]||''}">#${t.rank}</div>
+      <div class="signal-body">
+        <div class="signal-etf">${t.etf} ${badge}</div>
+        <div class="signal-meta">
+          3M return: <strong class="${t.vel3m>=0?'green':'red'}">${t.vel3m>=0?'+':''}${t.vel3m.toFixed(2)}%</strong>
+          &nbsp;·&nbsp; Monday close: &#x20b9;${t.current_px}
+          &nbsp;·&nbsp; Execute at: &#x20b9;${t.exec_price}
+          ${pos?`&nbsp;·&nbsp; Your entry: &#x20b9;${pos.avgPrice.toFixed(2)} (<span class="${gain>=0?'green':'red'}">${gain>=0?'+':''}${gain?.toFixed(1)}%</span>)`:''}
+        </div>
+        ${t.trigger_date?`<div style="font-size:12px;margin-top:5px;padding:5px 10px;background:var(--surface2);border-radius:6px;display:inline-block;border-left:3px solid var(--accent)">
+          In top 3 since <strong>${t.trigger_date}</strong>
+          &nbsp;at &#x20b9;${t.trigger_price}
+          &nbsp;&mdash; moved <strong class="${(t.pct_since_trigger||0)>=0?'green':'red'}">${(t.pct_since_trigger||0)>=0?'+':''}${(t.pct_since_trigger||0).toFixed(2)}%</strong> since signal triggered
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const confirms=[];
+  top.forEach(t=>{
+    const isHeld=held.includes(t.etf);
+    const vel=t.vel3m;
+    const pos=S.positions[t.etf];
+    const cur=S.prices[t.etf]?.current||t.exec_price;
+    const gain=pos?(cur-pos.avgPrice)/pos.avgPrice*100:null;
+    if(vel<0&&!isHeld)return;
+    if(!isHeld&&vel>=0)confirms.push({etf:t.etf,action:'BUY',execPrice:t.exec_price});
+    if(isHeld&&gain!==null&&gain>=S.settings.skim*100)confirms.push({etf:t.etf,action:'SKIM',execPrice:t.exec_price});
+  });
+  held.forEach(etf=>{
+    if(!top.find(t=>t.etf===etf)){
+      const exec=S.prices[etf]?.exec||S.prices[etf]?.current||0;
+      confirms.push({etf,action:'EXIT',execPrice:exec});
+    }
+  });
+  pendingConfirms=confirms;
+
+  if(!confirms.length){
+    document.getElementById('confirm-list').innerHTML=
+      '<p style="color:var(--muted);font-size:13px">No action needed this week — positions match signal.</p>';
+  } else {
+    document.getElementById('confirm-list').innerHTML=confirms.map((c,i)=>`
+      <div class="confirm-item">
+        <div class="confirm-top">
+          <input type="checkbox" id="chk${i}" checked style="width:auto;cursor:pointer">
+          <label for="chk${i}" style="font-size:15px;font-weight:600;cursor:pointer;display:inline">
+            <span class="badge badge-${c.action.toLowerCase()}">${c.action}</span>
+            &nbsp;${c.etf}
+          </label>
+        </div>
+        <div class="confirm-inputs">
+          <div><label>Units</label><input type="number" id="cu${i}" step="0.001" placeholder="0"></div>
+          <div><label>Actual price (₹)</label><input type="number" id="cp${i}" value="${c.execPrice}" step="0.01"></div>
+          <div><label>Extra charges (₹)</label><input type="number" id="cc${i}" value="0" step="0.01"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  document.getElementById('full-ranking-list').innerHTML=`
+    <table>
+      <thead><tr><th>#</th><th>ETF</th><th>3M return</th><th>Monday close</th><th>Exec price</th></tr></thead>
+      <tbody>${data.full_ranking.map(r=>`<tr>
+        <td style="color:var(--muted)">${r.rank}</td>
+        <td><strong>${r.etf}</strong></td>
+        <td class="${r.vel3m>=0?'green':'red'}">${r.vel3m>=0?'+':''}${r.vel3m.toFixed(2)}%</td>
+        <td>₹${r.current_px}</td>
+        <td>₹${r.exec_price}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+
+  document.getElementById('signal-loading').style.display='none';
+  document.getElementById('signal-body').style.display='block';
+}
+
+// ─────────────────────────────────────────────
+// TRADES
+// ─────────────────────────────────────────────
+async function loadTradesFromSB(){
+  const rows = await sbFetch('trades?order=trade_date.desc&select=*');
+  if(!rows) return;
+  // Map Supabase rows → internal format
+  S.trades = rows.map(r=>({
+    id      : r.id,
+    date    : r.trade_date,
+    etf     : r.etf,
+    type    : r.action,
+    units   : parseFloat(r.units),
+    price   : parseFloat(r.price),
+    value   : parseFloat(r.units)*parseFloat(r.price),
+    friction: parseFloat(r.charges||0),
+    pnl     : 0, // recalculated below
+    notes   : r.notes||'',
+  }));
+  // Rebuild positions + P&L from scratch
+  rebuildState();
+  saveLocal();
+}
+function getfy(d){const dt=new Date(d);return dt.getMonth()>=3?dt.getFullYear():dt.getFullYear()-1;}
+function recordFyPnl(date,pnl){
+  const fy=getfy(date);
+  if(!S.fyData[fy])S.fyData[fy]={net:0,tax:0};
+  S.fyData[fy].net+=pnl;
+}
+function executeTrade(etf,action,units,price,charges,date){
+  const friction=units*price*S.settings.friction+(charges||0);
+  let pnl=0;
+  if(action==='BUY'){
+    if(!S.positions[etf])S.positions[etf]={units:0,avgPrice:0,costBasis:0,entryDate:date};
+    const pos=S.positions[etf];
+    const tot=pos.units*pos.avgPrice+units*price;
+    pos.units+=units;pos.avgPrice=tot/pos.units;pos.costBasis=tot;
+  } else if(action==='EXIT'||action==='SELL'){
+    const pos=S.positions[etf];
+    if(pos){pnl=(price-pos.avgPrice)*units-friction;recordFyPnl(date,pnl);if(units>=pos.units*0.99)delete S.positions[etf];else{pos.units-=units;pos.costBasis=pos.units*pos.avgPrice;}}
+  } else if(action==='SKIM'){
+    const pos=S.positions[etf];
+    if(pos){const surplus=(price-pos.avgPrice)*units;pnl=surplus-friction;const fk=(pos.units-units)/pos.units;pos.units-=units;pos.costBasis*=fk;pos.avgPrice=pos.costBasis/pos.units;recordFyPnl(date,pnl);}
+  }
+  const trade={id:Date.now()+Math.random(),date,etf,type:action,units,price,value:units*price,friction,pnl};
+  S.trades.unshift(trade);
+  return trade;
+}
+async function saveConfirmed(){
+  if(!pendingConfirms.length)return;
+  let count=0;
+  const today=new Date().toISOString().slice(0,10);
+  for(let i=0;i<pendingConfirms.length;i++){
+    const c=pendingConfirms[i];
+    if(!document.getElementById('chk'+i)?.checked)continue;
+    const units=parseFloat(document.getElementById('cu'+i)?.value||0);
+    const price=parseFloat(document.getElementById('cp'+i)?.value||c.execPrice);
+    const charges=parseFloat(document.getElementById('cc'+i)?.value||0);
+    if(!units||!price)continue;
+    const trade=executeTrade(c.etf,c.action,units,price,charges,today);
+    await saveTradeToSB(trade);
+    count++;
+  }
+  if(count>0){
+    await syncPortfolioToSB();
+    saveLocal();
+    alert(count+' trade(s) saved successfully.');
+    renderPortfolio();renderTradeLog();renderTax();
+  } else {
+    alert('No trades saved — make sure units are filled in for checked items.');
+  }
+}
+async function addManualTrade(){
+  const etf=document.getElementById('m-etf').value.trim().toUpperCase();
+  const type=document.getElementById('m-type').value;
+  const date=document.getElementById('m-date').value||new Date().toISOString().slice(0,10);
+  const units=parseFloat(document.getElementById('m-units').value||0);
+  const price=parseFloat(document.getElementById('m-price').value||0);
+  const charges=parseFloat(document.getElementById('m-charges').value||0);
+  if(!etf||!units||!price){alert('Please fill in ETF, units and price.');return;}
+  const trade=executeTrade(etf,type,units,price,charges,date);
+  await saveTradeToSB(trade);
+  await syncPortfolioToSB();
+  saveLocal();
+  renderPortfolio();renderTradeLog();renderTax();
+  ['m-etf','m-units','m-price'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-charges').value='0';
+  alert('Trade added.');
+}
+async function deleteTradeFromSB(id){
+  return sbFetch(`trades?id=eq.${id}`,{ method:'DELETE' });
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function renderPortfolio(){
+  const pos=Object.entries(S.positions);
+  const cost=pos.reduce((s,[,p])=>s+p.costBasis,0);
+  const mktv=pos.reduce((s,[etf,p])=>{const cur=S.prices[etf]?.current||p.avgPrice;return s+p.units*cur;},0);
+  const unPnl=mktv-cost;
+  const ret=cost>0?unPnl/cost*100:0;
+  const realised=S.trades.filter(t=>t.type!=='BUY').reduce((s,t)=>s+(t.pnl||0),0);
+
+  document.getElementById('port-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Market value</div><div class="metric-value">${fmtRs(mktv)}</div></div>
+    <div class="metric"><div class="metric-label">Invested</div><div class="metric-value">${fmtRs(cost)}</div></div>
+    <div class="metric"><div class="metric-label">Unrealised P&amp;L</div><div class="metric-value ${unPnl>=0?'green':'red'}">${fmtRs(unPnl)}</div></div>
+    <div class="metric"><div class="metric-label">Return</div><div class="metric-value ${ret>=0?'green':'red'}">${fmtPct(ret)}</div></div>
+    <div class="metric"><div class="metric-label">Realised P&amp;L</div><div class="metric-value ${realised>=0?'green':'red'}">${fmtRs(realised)}</div></div>`;
+
+  if(!pos.length){
+    document.getElementById('positions-body').innerHTML='<p style="color:var(--muted);font-size:13px;padding:1rem 0">No open positions yet.</p>';
+    return;
+  }
+  document.getElementById('positions-body').innerHTML=`
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>ETF</th><th>Units</th><th>Avg price</th><th>Cost basis</th><th>Current</th><th>Mkt value</th><th>P&amp;L</th><th>Return</th><th>Skim</th></tr></thead>
+      <tbody>${pos.map(([etf,p])=>{
+        const cur=S.prices[etf]?.current||p.avgPrice;
+        const mv=p.units*cur;const pnl=mv-p.costBasis;const r=p.costBasis>0?pnl/p.costBasis*100:0;
+        const pct=Math.min(r/(S.settings.skim*100)*100,100);const warn=r>=S.settings.skim*100;
+        return `<tr>
+          <td><strong>${etf}</strong></td><td>${p.units.toFixed(3)}</td>
+          <td>₹${p.avgPrice.toFixed(2)}</td><td>${fmtRs(p.costBasis)}</td>
+          <td>₹${cur.toFixed(2)}</td><td>${fmtRs(mv)}</td>
+          <td class="${pnl>=0?'green':'red'}">${fmtRs(pnl)}</td>
+          <td class="${r>=0?'green':'red'}">${fmtPct(r)}</td>
+          <td style="min-width:100px">
+            <div style="font-size:11px;color:${warn?'var(--warning)':'var(--muted)'}">
+              ${warn?'⚡ SKIM NOW':r.toFixed(1)+'% / '+(S.settings.skim*100)+'%'}
+            </div>
+            <div class="progress-bar"><div class="progress-fill ${warn?'warn':pct>60?'good':''}" style="width:${pct}%"></div></div>
+          </td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+}
+function renderTradeLog(){
+  const t=S.trades;
+  document.getElementById('trade-count').textContent=t.length+' trades recorded';
+  const body=document.getElementById('trade-tbody');
+  if(!t.length){body.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem">No trades yet</td></tr>';return;}
+  body.innerHTML=t.map(tr=>`<tr>
+    <td style="white-space:nowrap;color:var(--muted)">${tr.date}</td>
+    <td><strong>${tr.etf}</strong></td>
+    <td><span class="badge badge-${tr.type.toLowerCase()}">${tr.type}</span></td>
+    <td>${(tr.units||0).toFixed(3)}</td>
+    <td>₹${(tr.price||0).toFixed(2)}</td>
+    <td>${fmtRs(tr.value||0)}</td>
+    <td class="${(tr.pnl||0)>=0?'green':'red'}">${tr.pnl?fmtRs(tr.pnl):'—'}</td>
+    <td style="color:var(--muted)">${fmtRs(tr.friction||0)}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteTrade('${tr.id}')">✕</button></td>
+  </tr>`).join('');
+}
+function renderTax(){
+  const fys=Object.keys(S.fyData).sort();
+  let cf=S.fyLossCf||0;let totalTax=0;
+  const rows=fys.map(fy=>{
+    const d=S.fyData[fy];const taxable=d.net-cf;let tax=0;
+    if(taxable>0){tax=taxable*0.20;cf=0;}else{cf=Math.abs(taxable);}
+    d.tax=tax;totalTax+=tax;
+    return{fy:`FY${fy}–${parseInt(fy)+1}`,net:d.net,tax,eff:d.net>0?tax/d.net*100:0,cf};
+  });
+  const realised=S.trades.filter(t=>t.type!=='BUY').reduce((s,t)=>s+(t.pnl||0),0);
+  document.getElementById('tax-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Total realised P&amp;L</div><div class="metric-value ${realised>=0?'green':'red'}">${fmtRs(realised)}</div></div>
+    <div class="metric"><div class="metric-label">Total tax paid</div><div class="metric-value amber">${fmtRs(totalTax)}</div></div>
+    <div class="metric"><div class="metric-label">Carry-forward loss</div><div class="metric-value">${fmtRs(cf)}</div></div>
+    <div class="metric"><div class="metric-label">Effective tax rate</div><div class="metric-value">${realised>0?(totalTax/realised*100).toFixed(1)+'%':'—'}</div></div>`;
+  const el=document.getElementById('fy-rows');
+  if(!rows.length){el.innerHTML='<p style="color:var(--muted);font-size:13px">No closed trades yet.</p>';return;}
+  el.innerHTML=rows.map(r=>`
+    <div class="fy-row">
+      <div style="font-weight:700;min-width:110px">${r.fy}</div>
+      <div>Net P&amp;L: <span class="${r.net>=0?'green':'red'}">${fmtRs(r.net)}</span></div>
+      <div>Tax: <span class="amber">${fmtRs(r.tax)}</span></div>
+      <div style="color:var(--muted)">${r.eff.toFixed(1)}%</div>
+      ${r.cf>0?`<div style="font-size:12px;color:var(--muted)">CF→ ${fmtRs(r.cf)}</div>`:'<div></div>'}
+    </div>`).join('');
+}
+function fmtRs(n){if(isNaN(n))return'—';return'₹'+(Math.abs(n)>=1000?n.toLocaleString('en-IN',{maximumFractionDigits:0}):n.toFixed(2));}
+function fmtPct(n){return(n>=0?'+':'')+n.toFixed(2)+'%';}
+
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
+function loadSettingsForm(){
+  const s=S.settings;
+  document.getElementById('s-capital').value=s.capital;
+  document.getElementById('s-slots').value=s.slots;
+  document.getElementById('s-skim').value=s.skim*100;
+  document.getElementById('s-liquid').value=s.liquid*100;
+  document.getElementById('s-friction').value=s.friction*100;
+  document.getElementById('s-lookback').value=s.lookback;
+  // Check Supabase connection
+  sbFetch('trades?select=id&limit=1').then(r=>{
+    const el=document.getElementById('sb-connection-status');
+    el.style.color=r!==null?'var(--success)':'var(--danger)';
+    el.textContent=r!==null?'✅ Supabase connected and working.':'❌ Supabase connection failed. Check your project settings.';
+  });
+}
+
+// ─────────────────────────────────────────────
+// EXPORT
+// ─────────────────────────────────────────────
+function exportCSV(){
+  const rows=[['Date','ETF','Type','Units','Price','Value','P&L','Friction']];
+  S.trades.forEach(t=>rows.push([t.date,t.etf,t.type,(t.units||0).toFixed(3),(t.price||0).toFixed(2),(t.value||0).toFixed(2),(t.pnl||0).toFixed(2),(t.friction||0).toFixed(2)]));
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'})),download:'freedom2040_trades.csv'});
+  a.click();
+}
+function clearAll(){
+  if(!confirm('Clear all LOCAL data? Supabase data is not deleted.'))return;
+  localStorage.removeItem(LS);
+  location.reload();
+}
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='portfolio') renderPortfolio();
+  if(name==='trades')    renderTradeLog();
+  if(name==='tax')       renderTax();
+  if(name==='universe'){ loadUniverseFromSupabase().then(()=>renderUniverse()); }
+  if(name==='settings')  loadSettingsForm();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  const mdate = document.getElementById('m-date');
+  if(mdate) mdate.value = new Date().toISOString().slice(0,10);
+});
+
+loadLocal();
+// Restore GH token immediately from local state
+if(S.settings && S.settings.gh_token) GH_TOKEN = S.settings.gh_token;
+
+// Load signal immediately — don't wait for Supabase
+loadSignal().then(data=>{ if(data) renderSignal(data); });
+
+// Load Supabase data in parallel — failures don't block signal
+Promise.allSettled([
+  loadUniverseFromSupabase().catch(()=>{}),
+  loadSettingsFromSupabase().catch(()=>{}),
+  loadTradesFromSB().catch(()=>{}),
+]).then(()=>{
+  if(S.settings && S.settings.gh_token) GH_TOKEN = S.settings.gh_token;
+  renderPortfolio();
+  renderTradeLog();
+  renderTax();
+  renderUniverse();
+});
+
+
+async function saveGHToken(){
+  const token=(document.getElementById('s-gh-token').value||'').trim();
+  const el=document.getElementById('gh-token-status');
+  if(!token || !token.startsWith('ghp_')){
+    if(el){el.style.color='var(--danger)';el.textContent='Must start with ghp_';}
+    return;
+  }
+  if(el) el.textContent='Validating...';
+  try{
+    const r=await fetch('https://api.github.com/user',{
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
+    });
+    if(!r.ok) throw new Error('GitHub rejected token ('+r.status+')');
+    const u=await r.json();
+    GH_TOKEN=token;
+    if(!S.settings) S.settings={};
+    S.settings.gh_token=token;
+    saveLocal();
+    try{ await saveSettingsToSupabase(); }catch(e){}
+    if(el){
+      el.style.color='var(--success)';
+      el.textContent='✅ Saved — authenticated as '+u.login;
+    }
+    const inp=document.getElementById('s-gh-token');
+    if(inp){ inp.value=''; inp.placeholder='●●●● saved ('+token.slice(0,8)+'...)'; }
+  }catch(e){
+    if(el){el.style.color='var(--danger)';el.textContent='❌ '+e.message;}
+  }
+}
+</script>
+</body>
+        </html>
