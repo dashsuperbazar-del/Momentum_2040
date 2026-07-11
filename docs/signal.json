@@ -1,37 +1,37 @@
 {
-  "generated_at": "2026-07-11T02:55:18.468499",
-  "generated_at_ist": "2026-07-11 08:25 IST",
+  "generated_at": "2026-07-11T03:03:39.587253",
+  "generated_at_ist": "2026-07-11 08:33 IST",
   "data_source": "NSE EOD via yfinance (Monday closing prices, ~1hr delayed)",
   "signal_date": "2026-07-13",
   "exec_date": "2026-07-11",
-  "universe_size": 32,
+  "universe_size": 29,
   "top3": [
     {
       "rank": 1,
-      "etf": "MON100",
-      "vel3m": 27.3672,
-      "current_px": 324.85,
-      "exec_price": 324.85,
+      "etf": "MOREALTY",
+      "vel3m": 19.3455,
+      "current_px": 90.44,
+      "exec_price": 90.44,
       "signal_date": "2026-07-13",
       "exec_date": "2026-07-11",
       "action": "BUY_OR_HOLD"
     },
     {
       "rank": 2,
-      "etf": "MONQ50",
-      "vel3m": 23.7082,
-      "current_px": 143.65,
-      "exec_price": 143.65,
+      "etf": "PHARMABEES",
+      "vel3m": 16.8435,
+      "current_px": 26.43,
+      "exec_price": 26.43,
       "signal_date": "2026-07-13",
       "exec_date": "2026-07-11",
       "action": "BUY_OR_HOLD"
     },
     {
       "rank": 3,
-      "etf": "MAFANG",
-      "vel3m": 19.5908,
-      "current_px": 194.06,
-      "exec_price": 194.06,
+      "etf": "HDFCSML250",
+      "vel3m": 14.3156,
+      "current_px": 180.15,
+      "exec_price": 180.15,
       "signal_date": "2026-07-13",
       "exec_date": "2026-07-11",
       "action": "BUY_OR_HOLD"
@@ -40,229 +40,208 @@
   "full_ranking": [
     {
       "rank": 1,
-      "etf": "MON100",
-      "vel3m": 27.3672,
-      "current_px": 324.85,
-      "exec_price": 324.85
-    },
-    {
-      "rank": 2,
-      "etf": "MONQ50",
-      "vel3m": 23.7082,
-      "current_px": 143.65,
-      "exec_price": 143.65
-    },
-    {
-      "rank": 3,
-      "etf": "MAFANG",
-      "vel3m": 19.5908,
-      "current_px": 194.06,
-      "exec_price": 194.06
-    },
-    {
-      "rank": 4,
       "etf": "MOREALTY",
       "vel3m": 19.3455,
       "current_px": 90.44,
       "exec_price": 90.44
     },
     {
-      "rank": 5,
+      "rank": 2,
       "etf": "PHARMABEES",
       "vel3m": 16.8435,
       "current_px": 26.43,
       "exec_price": 26.43
     },
     {
-      "rank": 6,
+      "rank": 3,
       "etf": "HDFCSML250",
       "vel3m": 14.3156,
       "current_px": 180.15,
       "exec_price": 180.15
     },
     {
-      "rank": 7,
+      "rank": 4,
       "etf": "MODEFENCE",
       "vel3m": 11.9558,
       "current_px": 102.35,
       "exec_price": 102.35
     },
     {
-      "rank": 8,
+      "rank": 5,
       "etf": "MID150BEES",
       "vel3m": 9.4522,
       "current_px": 239.58,
       "exec_price": 239.58
     },
     {
-      "rank": 9,
+      "rank": 6,
       "etf": "MOM100",
       "vel3m": 8.4762,
       "current_px": 67.06,
       "exec_price": 67.06
     },
     {
-      "rank": 10,
+      "rank": 7,
       "etf": "ALPHA",
       "vel3m": 7.7312,
       "current_px": 51.14,
       "exec_price": 51.14
     },
     {
-      "rank": 11,
+      "rank": 8,
       "etf": "NEXT50IETF",
       "vel3m": 7.7108,
       "current_px": 76.13,
       "exec_price": 76.13
     },
     {
-      "rank": 12,
+      "rank": 9,
       "etf": "EVINDIA",
       "vel3m": 7.4957,
       "current_px": 31.12,
       "exec_price": 31.12
     },
     {
-      "rank": 13,
+      "rank": 10,
       "etf": "MIDSMALL",
       "vel3m": 6.1345,
       "current_px": 50.52,
       "exec_price": 50.52
     },
     {
-      "rank": 14,
+      "rank": 11,
       "etf": "CONSUMBEES",
       "vel3m": 6.0961,
       "current_px": 130.53,
       "exec_price": 130.53
     },
     {
-      "rank": 15,
+      "rank": 12,
       "etf": "GROWWPOWER",
       "vel3m": 4.7748,
       "current_px": 11.63,
       "exec_price": 11.63
     },
     {
-      "rank": 16,
+      "rank": 13,
       "etf": "INFRAIETF",
       "vel3m": 4.4985,
       "current_px": 97.1,
       "exec_price": 97.1
     },
     {
-      "rank": 17,
+      "rank": 14,
       "etf": "MOENERGY",
       "vel3m": 4.2384,
       "current_px": 38.88,
       "exec_price": 38.88
     },
     {
-      "rank": 18,
+      "rank": 15,
       "etf": "MOMENTUM50",
       "vel3m": 4.2114,
       "current_px": 52.46,
       "exec_price": 52.46
     },
     {
-      "rank": 19,
+      "rank": 16,
       "etf": "BANKBEES",
       "vel3m": 3.4515,
       "current_px": 592.56,
       "exec_price": 592.56
     },
     {
-      "rank": 20,
+      "rank": 17,
       "etf": "TNIDETF",
       "vel3m": 3.1568,
       "current_px": 83.0,
       "exec_price": 83.0
     },
     {
-      "rank": 21,
+      "rank": 18,
       "etf": "EQUAL50ADD",
       "vel3m": 2.9157,
       "current_px": 338.85,
       "exec_price": 338.85
     },
     {
-      "rank": 22,
+      "rank": 19,
       "etf": "AUTOBEES",
       "vel3m": 2.5635,
       "current_px": 275.26,
       "exec_price": 275.26
     },
     {
-      "rank": 23,
+      "rank": 20,
       "etf": "MOM30IETF",
       "vel3m": 1.8319,
       "current_px": 31.13,
       "exec_price": 31.13
     },
     {
-      "rank": 24,
+      "rank": 21,
       "etf": "METALIETF",
       "vel3m": 1.3732,
       "current_px": 12.55,
       "exec_price": 12.55
     },
     {
-      "rank": 25,
+      "rank": 22,
       "etf": "NIFTYBEES",
       "vel3m": 1.2021,
       "current_px": 272.76,
       "exec_price": 272.76
     },
     {
-      "rank": 26,
+      "rank": 23,
       "etf": "OILIETF",
       "vel3m": 0.0894,
       "current_px": 11.2,
       "exec_price": 11.2
     },
     {
-      "rank": 27,
+      "rank": 24,
       "etf": "GOLDBEES",
       "vel3m": -4.3148,
       "current_px": 118.42,
       "exec_price": 118.42
     },
     {
-      "rank": 28,
+      "rank": 25,
       "etf": "PSUBNKBEES",
       "vel3m": -5.0842,
       "current_px": 91.85,
       "exec_price": 91.85
     },
     {
-      "rank": 29,
+      "rank": 26,
       "etf": "SILVERBEES",
       "vel3m": -5.3429,
       "current_px": 212.95,
       "exec_price": 212.95
     },
     {
-      "rank": 30,
+      "rank": 27,
       "etf": "CPSEETF",
       "vel3m": -7.6172,
       "current_px": 95.57,
       "exec_price": 95.57
     },
     {
-      "rank": 31,
+      "rank": 28,
       "etf": "HNGSNGBEES",
       "vel3m": -7.6802,
       "current_px": 480.34,
       "exec_price": 480.34
     },
     {
-      "rank": 32,
+      "rank": 29,
       "etf": "ITBEES",
       "vel3m": -10.0709,
       "current_px": 30.45,
       "exec_price": 30.45
     }
   ],
-  "n_positive": 26,
-  "n_total": 32
+  "n_positive": 23,
+  "n_total": 29
 }
