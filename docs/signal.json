@@ -1,310 +1,310 @@
 {
-  "generated_at": "2026-08-03T13:44:32.467904",
-  "generated_at_ist": "2026-08-03 19:14 IST",
+  "generated_at": "2026-08-10T11:53:32.878207",
+  "generated_at_ist": "2026-08-10 17:23 IST",
   "data_source": "NSE EOD via yfinance (Monday closing prices, ~1hr delayed)",
-  "signal_date": "2026-08-03",
-  "exec_date": "2026-08-03",
+  "signal_date": "2026-08-10",
+  "exec_date": "2026-08-10",
   "universe_size": 38,
   "top3": [
     {
       "rank": 1,
-      "etf": "MONQ50",
-      "vel3m": 13.4921,
-      "current_px": 140.56,
-      "exec_price": 140.56,
-      "signal_date": "2026-08-03",
-      "exec_date": "2026-08-03",
+      "etf": "MOREALTY",
+      "vel3m": 13.7043,
+      "current_px": 90.52,
+      "exec_price": 90.52,
+      "signal_date": "2026-08-10",
+      "exec_date": "2026-08-10",
       "action": "BUY_OR_HOLD"
     },
     {
       "rank": 2,
-      "etf": "PHARMABEES",
-      "vel3m": 13.2225,
-      "current_px": 27.23,
-      "exec_price": 27.23,
-      "signal_date": "2026-08-03",
-      "exec_date": "2026-08-03",
+      "etf": "AUTOBEES",
+      "vel3m": 11.8836,
+      "current_px": 307.21,
+      "exec_price": 307.21,
+      "signal_date": "2026-08-10",
+      "exec_date": "2026-08-10",
       "action": "BUY_OR_HOLD"
     },
     {
       "rank": 3,
-      "etf": "AUTOBEES",
-      "vel3m": 12.0335,
-      "current_px": 299.32,
-      "exec_price": 299.32,
-      "signal_date": "2026-08-03",
-      "exec_date": "2026-08-03",
+      "etf": "MONQ50",
+      "vel3m": 10.9459,
+      "current_px": 144.74,
+      "exec_price": 144.74,
+      "signal_date": "2026-08-10",
+      "exec_date": "2026-08-10",
       "action": "BUY_OR_HOLD"
     }
   ],
   "full_ranking": [
     {
       "rank": 1,
-      "etf": "MONQ50",
-      "vel3m": 13.4921,
-      "current_px": 140.56,
-      "exec_price": 140.56
+      "etf": "MOREALTY",
+      "vel3m": 13.7043,
+      "current_px": 90.52,
+      "exec_price": 90.52
     },
     {
       "rank": 2,
-      "etf": "PHARMABEES",
-      "vel3m": 13.2225,
-      "current_px": 27.23,
-      "exec_price": 27.23
+      "etf": "AUTOBEES",
+      "vel3m": 11.8836,
+      "current_px": 307.21,
+      "exec_price": 307.21
     },
     {
       "rank": 3,
-      "etf": "AUTOBEES",
-      "vel3m": 12.0335,
-      "current_px": 299.32,
-      "exec_price": 299.32
+      "etf": "MONQ50",
+      "vel3m": 10.9459,
+      "current_px": 144.74,
+      "exec_price": 144.74
     },
     {
       "rank": 4,
-      "etf": "MOREALTY",
-      "vel3m": 11.3835,
-      "current_px": 90.41,
-      "exec_price": 90.41
+      "etf": "PHARMABEES",
+      "vel3m": 9.7944,
+      "current_px": 27.24,
+      "exec_price": 27.24
     },
     {
       "rank": 5,
-      "etf": "ITBEES",
-      "vel3m": 8.7011,
-      "current_px": 34.98,
-      "exec_price": 34.98
+      "etf": "MAFANG",
+      "vel3m": 9.663,
+      "current_px": 206.32,
+      "exec_price": 206.32
     },
     {
       "rank": 6,
-      "etf": "HDFCSML250",
-      "vel3m": 8.2079,
-      "current_px": 183.38,
-      "exec_price": 183.38
+      "etf": "ITBEES",
+      "vel3m": 8.4646,
+      "current_px": 35.11,
+      "exec_price": 35.11
     },
     {
       "rank": 7,
-      "etf": "CONSUMBEES",
-      "vel3m": 6.4735,
-      "current_px": 135.2,
-      "exec_price": 135.2
+      "etf": "ALPHA",
+      "vel3m": 7.1785,
+      "current_px": 53.75,
+      "exec_price": 53.75
     },
     {
       "rank": 8,
-      "etf": "ALPHA",
-      "vel3m": 6.222,
-      "current_px": 52.24,
-      "exec_price": 52.24
+      "etf": "CONSUMBEES",
+      "vel3m": 7.0383,
+      "current_px": 135.96,
+      "exec_price": 135.96
     },
     {
       "rank": 9,
-      "etf": "PVTBANIETF",
-      "vel3m": 6.0091,
-      "current_px": 28.05,
-      "exec_price": 28.05
+      "etf": "HDFCSML250",
+      "vel3m": 6.6605,
+      "current_px": 184.64,
+      "exec_price": 184.64
     },
     {
       "rank": 10,
-      "etf": "BANKBEES",
-      "vel3m": 5.6678,
-      "current_px": 597.34,
-      "exec_price": 597.34
+      "etf": "JUNIORBEES",
+      "vel3m": 6.6017,
+      "current_px": 809.0,
+      "exec_price": 809.0
     },
     {
       "rank": 11,
-      "etf": "MID150BEES",
-      "vel3m": 5.6058,
-      "current_px": 241.51,
-      "exec_price": 241.51
+      "etf": "NEXT50IETF",
+      "vel3m": 6.3881,
+      "current_px": 78.94,
+      "exec_price": 78.94
     },
     {
       "rank": 12,
-      "etf": "JUNIORBEES",
-      "vel3m": 5.5807,
-      "current_px": 801.59,
-      "exec_price": 801.59
+      "etf": "BANKBEES",
+      "vel3m": 6.1283,
+      "current_px": 596.77,
+      "exec_price": 596.77
     },
     {
       "rank": 13,
-      "etf": "MAFANG",
-      "vel3m": 5.5718,
-      "current_px": 191.18,
-      "exec_price": 191.18
+      "etf": "PSUBNKBEES",
+      "vel3m": 6.0713,
+      "current_px": 96.44,
+      "exec_price": 96.44
     },
     {
       "rank": 14,
-      "etf": "NEXT50IETF",
-      "vel3m": 5.188,
-      "current_px": 78.06,
-      "exec_price": 78.06
+      "etf": "PVTBANIETF",
+      "vel3m": 4.8642,
+      "current_px": 27.81,
+      "exec_price": 27.81
     },
     {
       "rank": 15,
-      "etf": "MON100",
-      "vel3m": 4.4986,
-      "current_px": 315.45,
-      "exec_price": 315.45
+      "etf": "MID150BEES",
+      "vel3m": 4.2633,
+      "current_px": 242.85,
+      "exec_price": 242.85
     },
     {
       "rank": 16,
-      "etf": "MODEFENCE",
-      "vel3m": 4.421,
-      "current_px": 102.98,
-      "exec_price": 102.98
+      "etf": "EQUAL50ADD",
+      "vel3m": 4.0998,
+      "current_px": 351.16,
+      "exec_price": 351.16
     },
     {
       "rank": 17,
-      "etf": "EQUAL50ADD",
-      "vel3m": 4.2229,
-      "current_px": 351.94,
-      "exec_price": 351.94
+      "etf": "MON100",
+      "vel3m": 4.0995,
+      "current_px": 328.08,
+      "exec_price": 328.08
     },
     {
       "rank": 18,
-      "etf": "MOMENTUM50",
-      "vel3m": 2.5735,
-      "current_px": 53.01,
-      "exec_price": 53.01
+      "etf": "NIFTYBEES",
+      "vel3m": 3.8356,
+      "current_px": 280.46,
+      "exec_price": 280.46
     },
     {
       "rank": 19,
-      "etf": "NIFTYBEES",
-      "vel3m": 2.4714,
-      "current_px": 279.87,
-      "exec_price": 279.87
+      "etf": "MODEFENCE",
+      "vel3m": 3.687,
+      "current_px": 105.74,
+      "exec_price": 105.74
     },
     {
       "rank": 20,
-      "etf": "MOM30IETF",
-      "vel3m": 0.5171,
-      "current_px": 31.1,
-      "exec_price": 31.1
+      "etf": "MOMENTUM50",
+      "vel3m": 3.2793,
+      "current_px": 54.17,
+      "exec_price": 54.17
     },
     {
       "rank": 21,
-      "etf": "PSUBNKBEES",
-      "vel3m": 0.4568,
-      "current_px": 94.57,
-      "exec_price": 94.57
+      "etf": "MOM30IETF",
+      "vel3m": 2.5517,
+      "current_px": 31.75,
+      "exec_price": 31.75
     },
     {
       "rank": 22,
-      "etf": "INFRAIETF",
-      "vel3m": 0.257,
-      "current_px": 97.52,
-      "exec_price": 97.52
+      "etf": "METALIETF",
+      "vel3m": 2.3112,
+      "current_px": 13.28,
+      "exec_price": 13.28
     },
     {
       "rank": 23,
-      "etf": "METALIETF",
-      "vel3m": -0.6891,
-      "current_px": 12.97,
-      "exec_price": 12.97
+      "etf": "INFRAIETF",
+      "vel3m": 1.911,
+      "current_px": 97.59,
+      "exec_price": 97.59
     },
     {
       "rank": 24,
-      "etf": "OILIETF",
-      "vel3m": -3.8623,
-      "current_px": 11.45,
-      "exec_price": 11.45
+      "etf": "GOLD1",
+      "vel3m": 1.4503,
+      "current_px": 125.91,
+      "exec_price": 125.91
     },
     {
       "rank": 25,
-      "etf": "TATAGOLD",
-      "vel3m": -4.039,
-      "current_px": 13.78,
-      "exec_price": 13.78
+      "etf": "GOLDIETF",
+      "vel3m": 1.357,
+      "current_px": 129.22,
+      "exec_price": 129.22
     },
     {
       "rank": 26,
-      "etf": "GOLD1",
-      "vel3m": -4.0444,
-      "current_px": 118.39,
-      "exec_price": 118.39
+      "etf": "SETFGOLD",
+      "vel3m": 1.2513,
+      "current_px": 128.66,
+      "exec_price": 128.66
     },
     {
       "rank": 27,
-      "etf": "GOLDIETF",
-      "vel3m": -4.1137,
-      "current_px": 121.44,
-      "exec_price": 121.44
+      "etf": "TATAGOLD",
+      "vel3m": 1.1757,
+      "current_px": 14.63,
+      "exec_price": 14.63
     },
     {
       "rank": 28,
-      "etf": "GOLDBEES",
-      "vel3m": -4.1837,
-      "current_px": 117.26,
-      "exec_price": 117.26
+      "etf": "HDFCGOLD",
+      "vel3m": 1.1548,
+      "current_px": 128.77,
+      "exec_price": 128.77
     },
     {
       "rank": 29,
-      "etf": "SETFGOLD",
-      "vel3m": -4.2257,
-      "current_px": 121.03,
-      "exec_price": 121.03
+      "etf": "GOLDBEES",
+      "vel3m": 1.0955,
+      "current_px": 124.58,
+      "exec_price": 124.58
     },
     {
       "rank": 30,
-      "etf": "HDFCGOLD",
-      "vel3m": -4.2654,
-      "current_px": 121.2,
-      "exec_price": 121.2
+      "etf": "OILIETF",
+      "vel3m": -0.7813,
+      "current_px": 11.43,
+      "exec_price": 11.43
     },
     {
       "rank": 31,
       "etf": "GROWWPOWER",
-      "vel3m": -6.2903,
-      "current_px": 11.62,
-      "exec_price": 11.62
+      "vel3m": -5.4783,
+      "current_px": 11.56,
+      "exec_price": 11.56
     },
     {
       "rank": 32,
       "etf": "SBISILVER",
-      "vel3m": -10.2984,
-      "current_px": 211.66,
-      "exec_price": 211.66
+      "vel3m": -8.4427,
+      "current_px": 226.11,
+      "exec_price": 226.11
     },
     {
       "rank": 33,
       "etf": "SILVER",
-      "vel3m": -10.315,
-      "current_px": 215.54,
-      "exec_price": 215.54
+      "vel3m": -8.4682,
+      "current_px": 230.23,
+      "exec_price": 230.23
     },
     {
       "rank": 34,
       "etf": "SILVERIETF",
-      "vel3m": -10.3184,
-      "current_px": 215.46,
-      "exec_price": 215.46
+      "vel3m": -8.5456,
+      "current_px": 230.2,
+      "exec_price": 230.2
     },
     {
       "rank": 35,
       "etf": "TATSILV",
-      "vel3m": -10.3419,
-      "current_px": 20.98,
-      "exec_price": 20.98
+      "vel3m": -8.5784,
+      "current_px": 22.38,
+      "exec_price": 22.38
     },
     {
       "rank": 36,
       "etf": "SILVERBEES",
-      "vel3m": -10.3794,
-      "current_px": 206.45,
-      "exec_price": 206.45
+      "vel3m": -8.6328,
+      "current_px": 220.46,
+      "exec_price": 220.46
     },
     {
       "rank": 37,
       "etf": "HDFCSILVER",
-      "vel3m": -10.4461,
-      "current_px": 206.78,
-      "exec_price": 206.78
+      "vel3m": -8.6888,
+      "current_px": 220.69,
+      "exec_price": 220.69
     },
     {
       "rank": 38,
       "etf": "CPSEETF",
-      "vel3m": -12.147,
-      "current_px": 94.89,
-      "exec_price": 94.89
+      "vel3m": -11.0985,
+      "current_px": 93.8,
+      "exec_price": 93.8
     }
   ],
-  "n_positive": 22,
+  "n_positive": 29,
   "n_total": 38
 }
